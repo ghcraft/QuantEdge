@@ -70,8 +70,3 @@ export async function disconnect() {
   await instance.$disconnect();
 }
 
-// Helper para desconectar (útil em testes)
-export async function disconnect() {
-  await prisma.$disconnect();
-}
-
