@@ -11,31 +11,73 @@ export { PrismaClient } from './client';
 `;
 
 // Cria o arquivo default.js
-// O problema: @prisma/client/index.js faz: ...require('.prisma/client/default')
-// O spread operator precisa de um objeto com propriedades, não getters
-// Solução: Exportar diretamente do @prisma/client
-// Node.js cacheia módulos, então o require circular é seguro
-// O spread operator vai pegar as propriedades do objeto já carregado
-const jsContent = `// Export from @prisma/client
+// Solução: Construir PrismaClient diretamente do runtime usando o config do arquivo gerado
+// Isso evita o loop circular completamente
+const jsContent = `// Export PrismaClient from runtime
 // This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
-// Node.js caches modules, so circular require is safe
-// The spread operator will get properties from the cached module
-let prismaExports;
+// We construct PrismaClient directly from runtime to avoid circular dependency
 
-// Check if @prisma/client is already in cache (loaded)
-const prismaPath = require.resolve('@prisma/client');
-if (require.cache[prismaPath] && require.cache[prismaPath].exports) {
-  // Use cached version to avoid re-execution
-  prismaExports = require.cache[prismaPath].exports;
-} else {
-  // Load @prisma/client (Node.js will cache it)
-  // This may cause a circular dependency, but Node.js handles it
-  prismaExports = require('@prisma/client');
+const runtime = require('@prisma/client/runtime/client');
+const path = require('path');
+const fs = require('fs');
+
+// Read the config from the generated class.ts file
+// The config is embedded in the file, we'll extract it
+let config;
+try {
+  // Try to read the config from internal/class.ts
+  const classPath = path.join(__dirname, 'internal', 'class.ts');
+  const classContent = fs.readFileSync(classPath, 'utf-8');
+  
+  // Extract config object from the file
+  // The config is defined as: const config: runtime.GetPrismaClientConfig = { ... }
+  const configMatch = classContent.match(/const config[^=]*=\\s*({[\\s\\S]*?});/);
+  if (configMatch) {
+    // Evaluate the config object (it's valid JavaScript)
+    config = eval('(' + configMatch[1] + ')');
+  }
+} catch (e) {
+  console.warn('Could not read config from class.ts, using fallback');
 }
 
-// Export everything that @prisma/client exports
-// The spread operator in @prisma/client/index.js expects this
-module.exports = prismaExports;
+// If we couldn't read the config, try to get PrismaClient from @prisma/client
+// This will cause a circular dependency, but it's the only fallback
+if (!config) {
+  try {
+    const prisma = require('@prisma/client');
+    if (typeof prisma.PrismaClient === 'function') {
+      module.exports = prisma;
+      return;
+    }
+  } catch (e) {
+    // Ignore
+  }
+}
+
+// Construct PrismaClient from runtime
+let PrismaClientClass;
+try {
+  if (config) {
+    PrismaClientClass = runtime.getPrismaClient(config);
+  } else {
+    // Fallback: try to get from @prisma/client
+    const prisma = require('@prisma/client');
+    PrismaClientClass = prisma.PrismaClient;
+  }
+} catch (e) {
+  console.error('Error constructing PrismaClient:', e.message);
+  // Last resort: dummy constructor
+  PrismaClientClass = class PrismaClient {
+    constructor() {
+      throw new Error('PrismaClient could not be loaded. Please run: npx prisma generate');
+    }
+  };
+}
+
+// Export what @prisma/client/index.js expects
+module.exports = {
+  PrismaClient: PrismaClientClass,
+};
 `;
 
 if (fs.existsSync(prismaClientPath)) {
