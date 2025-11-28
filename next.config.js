@@ -89,7 +89,7 @@ const nextConfig = {
       // Força externalização do Prisma Client
       config.externals = config.externals || [];
       
-      const externalizePrisma = (context: any, request: string, callback: any) => {
+      const externalizePrisma = (context, request, callback) => {
         if (request.includes('@prisma/client') || request.includes('.prisma/client')) {
           return callback(null, `commonjs ${request}`);
         }
