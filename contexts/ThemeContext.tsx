@@ -9,7 +9,13 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+// Valor padrão para evitar erros durante SSR/build
+const defaultThemeValue: ThemeContextType = {
+  theme: "dark",
+  toggleTheme: () => {},
+};
+
+const ThemeContext = createContext<ThemeContextType>(defaultThemeValue);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Sempre usa tema dark
@@ -39,12 +45,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTheme() {
+  // Sempre retorna um valor válido, mesmo durante SSR/build
+  // O Context sempre terá um valor padrão, então nunca será undefined
   const context = useContext(ThemeContext);
-  // Durante SSR/build, retorna um valor padrão em vez de lançar erro
-  if (context === undefined) {
-    // Retorna um valor padrão durante SSR/build para evitar erros
-    return { theme: "dark" as Theme, toggleTheme: () => {} };
-  }
   return context;
 }
 

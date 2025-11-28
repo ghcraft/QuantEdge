@@ -52,10 +52,6 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   
-  // Desabilita completamente a geração estática durante o build
-  // Isso evita problemas com Context durante o prerender
-  output: 'standalone',
-  
   // Desabilita geração estática para rotas de API que usam Prisma
   // Isso evita problemas com dependência circular durante o build
   experimental: {
