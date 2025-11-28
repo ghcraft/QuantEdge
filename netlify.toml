@@ -8,6 +8,8 @@
   NEXT_PRIVATE_STANDALONE = "true"
   NEXT_PRIVATE_SKIP_STATIC = "true"
   CI = "false"
+  # Força renderização dinâmica - desabilita completamente o prerender
+  NEXT_PRIVATE_SKIP_PRERENDER = "true"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
