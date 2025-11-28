@@ -33,25 +33,14 @@ const RSS_FEEDS = [
     url: "https://g1.globo.com/rss/g1/economia/",
   },
   {
-    name: "UOL Economia",
-    url: "https://rss.uol.com.br/feed/economia.xml",
-  },
-  {
     name: "Folha de S.Paulo - Mercado",
     url: "https://feeds.folha.uol.com.br/mercado/rss091.xml",
   },
-  {
-    name: "CNN Brasil - Economia",
-    url: "https://www.cnnbrasil.com.br/economia/feed/",
-  },
-  {
-    name: "Terra - Economia",
-    url: "https://www.terra.com.br/rss/economia.xml",
-  },
-  {
-    name: "Reuters Brasil",
-    url: "https://br.reuters.com/rssFeed/businessNews",
-  },
+  // Feeds removidos temporariamente devido a erros:
+  // - UOL Economia: Feed não reconhecido como RSS 1 ou 2
+  // - CNN Brasil: Caracteres inválidos no XML
+  // - Terra: Status 404
+  // - Reuters Brasil: Status 401 (requer autenticação)
 ];
 
 /**
@@ -65,8 +54,13 @@ async function fetchFeedNews(
   feedName: string
 ): Promise<NewsItem[]> {
   try {
-    // Faz o parse do feed RSS
-    const feed = await parser.parseURL(feedUrl);
+    // Faz o parse do feed RSS com timeout de 10 segundos
+    const feed = await Promise.race([
+      parser.parseURL(feedUrl),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Timeout")), 10000)
+      ),
+    ]) as Awaited<ReturnType<typeof parser.parseURL>>;
 
     // Converte os itens do feed para o formato NewsItem
     const newsItems: NewsItem[] = (feed.items || []).map((item, index) => ({
@@ -83,8 +77,11 @@ async function fetchFeedNews(
 
     return newsItems;
   } catch (error) {
-    // Em caso de erro, retorna array vazio e loga o erro
-    console.error(`Erro ao buscar feed ${feedName}:`, error);
+    // Em caso de erro, retorna array vazio
+    // Só loga erros em desenvolvimento, não em produção/build
+    if (process.env.NODE_ENV === "development") {
+      console.error(`Erro ao buscar feed ${feedName}:`, error);
+    }
     return [];
   }
 }

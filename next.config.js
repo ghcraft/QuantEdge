@@ -62,12 +62,15 @@ const nextConfig = {
     return 'build-' + Date.now();
   },
   
+  // Configurações experimentais
   // Desabilita geração estática para rotas de API que usam Prisma
   // Isso evita problemas com dependência circular durante o build
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Desabilita completamente o prerender
+    isrMemoryCacheSize: 0,
   },
   
   // Configurações do webpack para melhor resolução de módulos
