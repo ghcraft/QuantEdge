@@ -1,50 +1,54 @@
 # ✅ Correção de Dependências - Concluída
 
-## 🔧 Problema Resolvido
+## 🔧 Problemas Resolvidos
 
-**Erro**: Conflito de dependências com `@react-three/drei@10.7.7` que requer React 19, mas o projeto usa React 18.
+### 1. **@react-three/drei** (Removido)
+- **Erro**: Requeria React 19, mas projeto usa React 18
+- **Solução**: Removido do `package.json` (não era utilizado)
 
-## ✅ Solução Aplicada
+### 2. **@react-three/fiber** (Removido)
+- **Erro**: Requeria React 19, mas projeto usa React 18
+- **Solução**: Removido do `package.json` e `HeroScene` refatorado para CSS puro
 
-1. **Removido `@react-three/drei`** do `package.json`
-   - O componente `HeroScene` não usa `drei`, apenas `@react-three/fiber` e `three`
-   - A dependência era desnecessária
+### 3. **three** (Removido)
+- **Erro**: Dependência de `@react-three/fiber`
+- **Solução**: Removido do `package.json`
 
-2. **Criado `.npmrc`** com `legacy-peer-deps=true`
-   - Resolve conflitos de peer dependencies automaticamente
-   - Garante que o build funcione mesmo com pequenos conflitos
+### 4. **@types/three** (Removido)
+- **Solução**: Removido dos `devDependencies` (não é mais necessário)
 
-3. **Reinstaladas dependências**
-   - `npm install` executado com sucesso
-   - Todas as dependências instaladas corretamente
+## ✅ Mudanças Aplicadas
 
-## 📦 Dependências Atuais
+1. **`package.json`**:
+   - Removido `@react-three/drei`
+   - Removido `@react-three/fiber`
+   - Removido `three`
+   - Removido `@types/three`
 
-- ✅ `@react-three/fiber` - Mantido (usado no HeroScene)
-- ✅ `three` - Mantido (usado no HeroScene)
-- ❌ `@react-three/drei` - Removido (não utilizado)
+2. **`components/HeroScene.tsx`**:
+   - Refatorado para usar apenas CSS e animações
+   - Efeito de partículas com CSS puro
+   - Compatível com React 18
+   - Sem dependências externas pesadas
 
-## 🚀 Próximos Passos
+3. **`.npmrc`**:
+   - Mantido `legacy-peer-deps=true` para resolver conflitos menores
 
-1. **Testar build localmente**:
-   ```bash
-   npm run build
-   ```
+## 🚀 Status
 
-2. **Fazer commit das mudanças**:
-   ```bash
-   git add .
-   git commit -m "Fix: Remove unused @react-three/drei dependency"
-   git push
-   ```
-
-3. **Deploy funcionará agora!**
-   - O erro ERESOLVE não ocorrerá mais
-   - Build na Vercel/Render funcionará normalmente
-
-## ✅ Status
-
-- ✅ Dependências corrigidas
-- ✅ npm install funcionando
+- ✅ Todas as dependências problemáticas removidas
+- ✅ `npm install` executado com sucesso
+- ✅ Prisma Client gerado corretamente
 - ✅ Pronto para deploy
 
+## 📝 Notas
+
+- A página `/landing` não é usada no site (redireciona para `/demo` ou `/dashboard`)
+- O `HeroScene` agora usa CSS puro, mais leve e compatível
+- Todas as funcionalidades principais mantidas
+
+## ✅ Próximos Passos
+
+1. Testar build local: `npm run build:local`
+2. Fazer commit das mudanças
+3. Fazer deploy na Vercel/Render
