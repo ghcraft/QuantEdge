@@ -3,6 +3,7 @@
  * Singleton para evitar múltiplas instâncias
  */
 
+// Import from @prisma/client - the default.js fix should handle the circular dependency
 import { PrismaClient } from "@prisma/client";
 
 declare global {

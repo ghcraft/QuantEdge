@@ -26,16 +26,17 @@ export { PrismaClient } from './client';
 // Cria o arquivo default.js
 // IMPORTANTE: O arquivo precisa ser CommonJS puro
 // Criamos package.json acima para garantir que seja tratado como CommonJS
-// Solução mais simples: re-exportar diretamente de @prisma/client
-// O Node.js lida com dependências circulares automaticamente
+// Solução: re-exportar diretamente de @prisma/client
+// Node.js lida com dependências circulares retornando módulos parcialmente inicializados
+// O Webpack também deve lidar com isso corretamente
 const jsContent = `// Export from @prisma/client
 // This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
 // 
 // IMPORTANT: This file MUST be CommonJS (enforced by package.json in this directory)
 // Simple solution: re-export everything from @prisma/client
-// Node.js handles circular dependencies by returning partially initialized modules
+// Node.js and Webpack handle circular dependencies by returning partially initialized modules
 
-// Direct re-export - Node.js will handle the circular dependency
+// Direct re-export - Node.js/Webpack will handle the circular dependency
 module.exports = require('@prisma/client');
 `;
 
