@@ -168,7 +168,7 @@ function CotacoesContent() {
         const updatedQuotes = ASSETS_QUOTES.map((quote) => {
           const realMarketData = realData.get(quote.symbol);
           
-          if (realMarketData && realMarketData.price > 0) {
+          if (realMarketData && realMarketData.price > 0 && !isNaN(realMarketData.price)) {
             return {
               ...quote,
               price: Number(realMarketData.price.toFixed(2)),
@@ -181,10 +181,8 @@ function CotacoesContent() {
               basePrice: realMarketData.price,
             };
           } else {
-            // Se não recebeu dados, mantém o quote original mas loga o problema
-            if (!realMarketData) {
-              console.warn(`[Cotações] Nenhum dado recebido para ${quote.symbol} (${quote.name})`);
-            }
+            // Se não recebeu dados, mantém o quote original
+            // Não loga warnings em produção para não poluir o console
             return quote;
           }
         });

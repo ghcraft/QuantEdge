@@ -29,10 +29,6 @@ const RSS_FEEDS = [
     url: "https://br.investing.com/rss/news.rss",
   },
   {
-    name: "G1 Economia",
-    url: "https://g1.globo.com/rss/g1/economia/",
-  },
-  {
     name: "Folha de S.Paulo - Mercado",
     url: "https://feeds.folha.uol.com.br/mercado/rss091.xml",
   },
@@ -41,6 +37,7 @@ const RSS_FEEDS = [
   // - CNN Brasil: Caracteres inválidos no XML
   // - Terra: Status 404
   // - Reuters Brasil: Status 401 (requer autenticação)
+  // - G1 Economia: Unable to parse XML
 ];
 
 /**
@@ -79,7 +76,12 @@ async function fetchFeedNews(
   } catch (error) {
     // Em caso de erro, retorna array vazio
     // Só loga erros em desenvolvimento, não em produção/build
-    if (process.env.NODE_ENV === "development") {
+    // Verifica se está em ambiente de desenvolvimento E não está em build
+    const isDev = process.env.NODE_ENV === "development";
+    const isBuild = process.env.NEXT_PHASE === "phase-production-build" || 
+                     process.env.VERCEL === "1" && process.env.VERCEL_ENV === "production";
+    
+    if (isDev && !isBuild) {
       console.error(`Erro ao buscar feed ${feedName}:`, error);
     }
     return [];

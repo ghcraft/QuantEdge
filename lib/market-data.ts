@@ -21,28 +21,62 @@ export interface MarketData {
 export async function fetchCryptoPrice(symbol: string): Promise<MarketData | null> {
   try {
     // Converte símbolo para formato Binance (ex: BTCUSDT, ETHUSDT)
-    const binanceSymbol = symbol.replace('BINANCE:', '').replace(':', '');
+    const binanceSymbol = symbol.replace('BINANCE:', '').replace(':', '').toUpperCase();
     
-    // Adiciona timestamp único para forçar atualização em tempo real
-    const timestamp = Date.now();
-    const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}&timestamp=${timestamp}`, {
-      cache: 'no-store', // Sem cache - dados sempre em tempo real
+    if (!binanceSymbol || binanceSymbol.length < 3) {
+      console.error(`[Market Data] Símbolo Binance inválido: ${binanceSymbol} (original: ${symbol})`);
+      return null;
+    }
+    
+    // API da Binance não precisa de timestamp no query string para ticker/24hr
+    const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`;
+    
+    // Cria um AbortController para timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(url, {
+      cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+        'Expires': '0',
+        'Accept': 'application/json',
+      },
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`Binance API error: ${response.status}`);
+      const errorText = await response.text().catch(() => '');
+      console.error(`[Market Data] Binance API error para ${binanceSymbol}: ${response.status} - ${errorText.substring(0, 200)}`);
+      
+      // Se for erro 400, pode ser símbolo inválido
+      if (response.status === 400) {
+        console.warn(`[Market Data] Símbolo ${binanceSymbol} pode ser inválido ou não existe na Binance`);
+      }
+      
+      return null;
     }
 
     const data = await response.json();
     
+    // Verifica se a resposta contém erro
+    if (data.code || data.msg) {
+      console.error(`[Market Data] Binance API retornou erro para ${binanceSymbol}:`, data);
+      return null;
+    }
+    
     // Usa lastPrice (preço mais recente) para tempo real
-    const price = parseFloat(data.lastPrice || data.price || 0);
-    const openPrice = parseFloat(data.openPrice || price);
+    const price = parseFloat(data.lastPrice || data.price || '0');
+    
+    if (!price || price === 0 || isNaN(price)) {
+      console.warn(`[Market Data] Preço inválido para ${binanceSymbol}:`, data);
+      return null;
+    }
+    
+    const openPrice = parseFloat(data.openPrice || price.toString());
     const change = price - openPrice;
     const changePercent = openPrice > 0 ? (change / openPrice) * 100 : 0;
     
@@ -50,7 +84,7 @@ export async function fetchCryptoPrice(symbol: string): Promise<MarketData | nul
     const priceChange24h = parseFloat(data.priceChangePercent || '0');
     const finalChangePercent = priceChange24h !== 0 ? priceChange24h : changePercent;
 
-    return {
+    const result = {
       symbol,
       price,
       change,
@@ -61,8 +95,26 @@ export async function fetchCryptoPrice(symbol: string): Promise<MarketData | nul
       marketCap: parseFloat(data.quoteVolume || '0'),
       timestamp: Date.now(),
     };
+    
+    // Log de sucesso apenas em desenvolvimento
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Market Data] ✅ Dados recebidos para ${binanceSymbol}: $${price.toFixed(2)}`);
+    }
+    
+    return result;
   } catch (error) {
-    console.error(`Erro ao buscar ${symbol}:`, error);
+    // Trata diferentes tipos de erro
+    if (error instanceof Error) {
+      if (error.name === 'AbortError' || error.message.includes('timeout')) {
+        console.error(`[Market Data] Timeout ao buscar ${symbol} na Binance`);
+      } else if (error.message.includes('fetch')) {
+        console.error(`[Market Data] Erro de rede ao buscar ${symbol}:`, error.message);
+      } else {
+        console.error(`[Market Data] Erro ao buscar ${symbol}:`, error.message);
+      }
+    } else {
+      console.error(`[Market Data] Erro desconhecido ao buscar ${symbol}:`, error);
+    }
     return null;
   }
 }
@@ -174,9 +226,10 @@ export async function fetchIndexPrice(symbol: string): Promise<MarketData | null
     // Mapeia símbolos de índices para Yahoo Finance
     const indexMap: Record<string, string> = {
       'INDEX:SPX': '^GSPC', // S&P 500
-      'INDEX:IXIC': '^IXIC', // NASDAQ
+      'INDEX:IXIC': '^IXIC', // NASDAQ Composite
       'INDEX:DJI': '^DJI',   // Dow Jones
       'INDEX:IBOV': '^BVSP', // Ibovespa
+      'INDEX:NDX': '^NDX',   // NASDAQ 100
       'BMFBOVESPA:IBOVESPA': '^BVSP', // Ibovespa (alternativo)
     };
 
