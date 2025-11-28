@@ -17,6 +17,14 @@
 ### 4. **@types/three** (Removido)
 - **Solução**: Removido dos `devDependencies` (não é mais necessário)
 
+### 5. **echarts** (Removido)
+- **Erro**: Não utilizado no projeto (usa `recharts` para gráficos)
+- **Solução**: Removido do `package.json`
+
+### 6. **echarts-gl** (Removido)
+- **Erro**: Requeria `echarts@^5.1.2`, mas projeto tinha `echarts@^6.0.0`
+- **Solução**: Removido do `package.json` (não era utilizado)
+
 ## ✅ Mudanças Aplicadas
 
 1. **`package.json`**:
@@ -24,6 +32,8 @@
    - Removido `@react-three/fiber`
    - Removido `three`
    - Removido `@types/three`
+   - Removido `echarts`
+   - Removido `echarts-gl`
 
 2. **`components/HeroScene.tsx`**:
    - Refatorado para usar apenas CSS e animações
@@ -39,6 +49,7 @@
 - ✅ Todas as dependências problemáticas removidas
 - ✅ `npm install` executado com sucesso
 - ✅ Prisma Client gerado corretamente
+- ✅ Sem conflitos de peer dependencies
 - ✅ Pronto para deploy
 
 ## 📝 Notas

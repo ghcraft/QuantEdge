@@ -14,8 +14,6 @@
   "dependencies": {
     "@prisma/client": "^7.0.1",
     "bcryptjs": "^3.0.3",
-    "echarts": "^6.0.0",
-    "echarts-gl": "^2.0.9",
     "jsonwebtoken": "^9.0.2",
     "next": "^14.2.0",
     "node-cron": "^3.0.3",
