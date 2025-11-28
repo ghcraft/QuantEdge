@@ -26,50 +26,17 @@ export { PrismaClient } from './client';
 // Cria o arquivo default.js
 // IMPORTANTE: O arquivo precisa ser CommonJS puro
 // Criamos package.json acima para garantir que seja tratado como CommonJS
-// Em CommonJS, 'exports' já existe, então usamos um nome diferente
-const jsContent = `// Export from @prisma/client with lazy loading
+// Solução mais simples: re-exportar diretamente de @prisma/client
+// O Node.js lida com dependências circulares automaticamente
+const jsContent = `// Export from @prisma/client
 // This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
 // 
 // IMPORTANT: This file MUST be CommonJS (enforced by package.json in this directory)
-// We use a getter to lazily load PrismaClient, avoiding circular dependency issues
-// Note: In CommonJS, 'exports' is already defined, so we use a different variable name
+// Simple solution: re-export everything from @prisma/client
+// Node.js handles circular dependencies by returning partially initialized modules
 
-const prismaExports = {};
-
-// Use Object.defineProperty to create a lazy getter for PrismaClient
-Object.defineProperty(prismaExports, 'PrismaClient', {
-  get: function() {
-    // Lazy load from @prisma/client when accessed
-    const prisma = require('@prisma/client');
-    return prisma.PrismaClient;
-  },
-  enumerable: true,
-  configurable: true
-});
-
-// For other properties, we can copy them immediately
-// But we need to be careful about circular dependencies
-try {
-  const prisma = require('@prisma/client');
-  // Copy all properties except PrismaClient (which we handle with getter)
-  for (const key in prisma) {
-    if (key !== 'PrismaClient' && !prismaExports.hasOwnProperty(key)) {
-      try {
-        prismaExports[key] = prisma[key];
-      } catch (e) {
-        // Ignore errors for individual properties
-      }
-    }
-  }
-} catch (e) {
-  // If there's an error, at least PrismaClient will work via getter
-  // Don't log in production to avoid noise
-  if (process.env.NODE_ENV === 'development') {
-    console.warn('Warning: Could not copy all properties from @prisma/client:', e.message);
-  }
-}
-
-module.exports = prismaExports;
+// Direct re-export - Node.js will handle the circular dependency
+module.exports = require('@prisma/client');
 `;
 
 // Cria default.d.ts (TypeScript types)

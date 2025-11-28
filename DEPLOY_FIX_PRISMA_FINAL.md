@@ -43,3 +43,4 @@ O script agora cria **dois arquivos** necessários:
 - O `@prisma/client` espera encontrar `.prisma/client/default`
 - O script garante que esses arquivos existam após cada `prisma generate`
 
+

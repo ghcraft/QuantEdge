@@ -44,3 +44,4 @@ O `eslint`, `eslint-config-next` e `@types/node-cron` estavam em `devDependencie
 - Tipos TypeScript usados no código devem estar em `dependencies` se o código for verificado durante o build
 - Dependências necessárias durante o build devem estar em `dependencies`
 
+

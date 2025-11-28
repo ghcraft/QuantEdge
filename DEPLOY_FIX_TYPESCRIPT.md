@@ -41,3 +41,4 @@ O `@types/node` e `typescript` estavam em `devDependencies`, mas são necessári
 - O Next.js precisa do TypeScript e `@types/node` para verificar tipos durante o build
 - Outros `@types/*` podem permanecer em `devDependencies` se não forem críticos para o build
 
+
