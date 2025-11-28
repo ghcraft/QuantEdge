@@ -3,12 +3,22 @@
  * Singleton para evitar múltiplas instâncias
  */
 
-// Import from @prisma/client - the default.js fix should handle the circular dependency
-import { PrismaClient } from "@prisma/client";
+// Lazy import to avoid circular dependency issues during Next.js build
+// This ensures PrismaClient is only loaded when actually needed
+let PrismaClient: any;
+let prismaInstance: any;
 
 declare global {
   // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
+  var prisma: any;
+}
+
+function getPrismaClient() {
+  if (!PrismaClient) {
+    // Dynamic import to avoid circular dependency
+    PrismaClient = require("@prisma/client").PrismaClient;
+  }
+  return PrismaClient;
 }
 
 // Singleton pattern para evitar múltiplas conexões em desenvolvimento
@@ -16,9 +26,14 @@ const prismaOptions = process.env.NODE_ENV === "development"
   ? { log: ["query", "error", "warn"] as const }
   : { log: ["error"] as const };
 
+function createPrismaInstance() {
+  const PrismaClientClass = getPrismaClient();
+  return new PrismaClientClass(prismaOptions as any);
+}
+
 export const prisma =
   global.prisma ||
-  new PrismaClient(prismaOptions as any);
+  (prismaInstance || (prismaInstance = createPrismaInstance()));
 
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;

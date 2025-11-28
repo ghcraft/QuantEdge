@@ -76,6 +76,21 @@ const nextConfig = {
       { module: /node_modules/ },
     ];
     
+    // Externaliza @prisma/client para evitar problemas com dependência circular
+    if (isServer) {
+      config.externals = config.externals || [];
+      if (typeof config.externals === 'function') {
+        const originalExternals = config.externals;
+        config.externals = [
+          ...(Array.isArray(originalExternals) ? originalExternals : []),
+          '@prisma/client',
+          '.prisma/client',
+        ];
+      } else if (Array.isArray(config.externals)) {
+        config.externals.push('@prisma/client', '.prisma/client');
+      }
+    }
+    
     return config;
   },
   
