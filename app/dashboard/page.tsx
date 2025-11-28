@@ -238,7 +238,7 @@ function RecentFavorites() {
           let type: "Crypto" | "Ação" | "Ação BR" | "Índice" = "Ação";
           if (asset.type === "crypto") type = "Crypto";
           else if (asset.type === "index") type = "Índice";
-          else if (asset.exchange === "B3" || asset.symbol.includes("3") || asset.symbol.includes("4")) type = "Ação BR";
+          else if ((asset as any).exchange === "B3" || asset.symbol.includes("3") || asset.symbol.includes("4")) type = "Ação BR";
           
           return { symbol, type };
         });
@@ -303,7 +303,7 @@ function RecentFavorites() {
     } else if (asset.type === "index") {
       return `INDEX:${asset.symbol}`;
     } else {
-      if (asset.exchange === "B3" || asset.symbol.includes("3") || asset.symbol.includes("4")) {
+      if ((asset as any).exchange === "B3" || asset.symbol.includes("3") || asset.symbol.includes("4")) {
         return `BMFBOVESPA:${asset.symbol}`;
       }
       return `NASDAQ:${asset.symbol}`;

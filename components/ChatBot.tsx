@@ -69,7 +69,7 @@ export default function ChatBot() {
     const shorter = str1.length > str2.length ? str2 : str1;
     if (longer.length === 0) return 1.0;
     return (
-      (longer.length - editDistance(longer, shorter)) / parseFloat(longer.length)
+      (longer.length - editDistance(longer, shorter)) / longer.length
     );
   };
 

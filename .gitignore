@@ -46,6 +46,9 @@ prisma/dev.db
 /lib/generated/prisma
 node_modules/.prisma
 
+# NPM
+.npmrc
+
 # Logs
 *.log
 logs/

@@ -3,10 +3,10 @@
  * Gera e valida tokens JWT
  */
 
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "30d"; // 30 dias
+const JWT_SECRET: string = process.env.JWT_SECRET || "your-secret-key-change-in-production";
+const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRES_IN || "30d"; // 30 dias
 
 export interface JWTPayload {
   userId: string;
@@ -24,7 +24,7 @@ export function generateToken(userId: string, email: string): string {
     JWT_SECRET,
     {
       expiresIn: JWT_EXPIRES_IN,
-    }
+    } as SignOptions
   );
 }
 

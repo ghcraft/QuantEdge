@@ -15,7 +15,7 @@ const getAssetSymbolAndType = (asset: FavoriteAsset): { symbol: string; type: "C
   } else if (asset.type === "index") {
     return { symbol: `INDEX:${asset.symbol}`, type: "Índice" };
   } else {
-    if (asset.exchange === "B3" || asset.symbol.includes("3") || asset.symbol.includes("4")) {
+    if ((asset as any).exchange === "B3" || asset.symbol.includes("3") || asset.symbol.includes("4")) {
       return { symbol: `BMFBOVESPA:${asset.symbol}`, type: "Ação BR" };
     }
     return { symbol: `NASDAQ:${asset.symbol}`, type: "Ação" };

@@ -31,7 +31,6 @@ export default function FeedbackWidget({ minimal = false }: FeedbackWidgetProps)
       userName: userName || "Usuário",
       rating,
       comment: comment.trim() || "",
-      isPublic: rating >= 4,
     });
 
     setSubmitted(true);

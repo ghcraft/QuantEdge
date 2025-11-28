@@ -56,6 +56,7 @@ const nextConfig = {
       };
     }
     
+    
     // Ignora warnings de módulos opcionais
     config.ignoreWarnings = [
       { module: /node_modules/ },

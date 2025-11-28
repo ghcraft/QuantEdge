@@ -238,7 +238,6 @@ function CotacoesContent() {
   // Atualiza preços em tempo real com dados reais de APIs, respeitando horários de mercado
   useEffect(() => {
     let isUpdating = false;
-    let updateTimeout: NodeJS.Timeout;
     
     const updatePrices = async () => {
       // Previne múltiplas atualizações simultâneas
@@ -368,7 +367,6 @@ function CotacoesContent() {
 
     return () => {
       clearInterval(priceUpdateInterval);
-      if (updateTimeout) clearTimeout(updateTimeout);
     };
   }, [selectedSymbol, quotes.length]);
 

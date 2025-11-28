@@ -139,11 +139,11 @@ export async function fetchStockPrice(symbol: string): Promise<MarketData | null
     const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0;
     
     // Para dados em tempo real, usa os valores mais recentes do array
-    const high24h = quote && quote.high && quote.high.length > 0 
-      ? Math.max(...quote.high.filter(v => v !== null && v !== undefined))
+    const high24h = quote && quote.high && quote.high.length > 0        
+      ? Math.max(...quote.high.filter((v: any) => v !== null && v !== undefined))
       : meta.regularMarketDayHigh || price;
     const low24h = quote && quote.low && quote.low.length > 0
-      ? Math.min(...quote.low.filter(v => v !== null && v !== undefined))
+      ? Math.min(...quote.low.filter((v: any) => v !== null && v !== undefined))
       : meta.regularMarketDayLow || price;
     const volume = quote && quote.volume && quote.volume.length > 0
       ? quote.volume[quote.volume.length - 1] || 0

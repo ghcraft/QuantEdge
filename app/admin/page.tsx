@@ -501,7 +501,7 @@ export default function AdminPage() {
                       {feedback.comment && (
                         <div className="mt-4 bg-dark-bg/60 rounded-xl p-4 border border-dark-border/30">
                           <p className="text-sm text-dark-text-muted font-light leading-relaxed">
-                            "{feedback.comment}"
+                            &ldquo;{feedback.comment}&rdquo;
                           </p>
                         </div>
                       )}
@@ -561,7 +561,7 @@ export default function AdminPage() {
                     </div>
                     {feedback.comment && (
                       <p className="text-sm text-dark-text-muted font-light mt-3 leading-relaxed">
-                        "{feedback.comment}"
+                        &ldquo;{feedback.comment}&rdquo;
                       </p>
                     )}
                   </div>
@@ -659,7 +659,7 @@ export default function AdminPage() {
                       </div>
                       {feedback.comment && (
                         <p className="text-sm text-dark-text-muted font-light mt-3 leading-relaxed">
-                          "{feedback.comment}"
+                          &ldquo;{feedback.comment}&rdquo;
                         </p>
                       )}
                     </div>
