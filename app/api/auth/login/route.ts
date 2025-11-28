@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { AuthServiceServer } from "@/lib/auth-server";
 import { logger } from "@/lib/logger";
 
+// Force dynamic rendering to avoid Prisma issues during build
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * POST /api/auth/login
  * Faz login do usuário

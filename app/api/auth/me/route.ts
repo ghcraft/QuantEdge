@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/middleware/auth";
 
+// Force dynamic rendering to avoid Prisma issues during build
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * GET /api/auth/me
  * Retorna informações do usuário autenticado

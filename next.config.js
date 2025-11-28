@@ -42,6 +42,14 @@ const nextConfig = {
   // Configurações de produção
   poweredByHeader: false,
   
+  // Desabilita geração estática para rotas de API que usam Prisma
+  // Isso evita problemas com dependência circular durante o build
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  
   // Configurações do webpack para melhor resolução de módulos
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
