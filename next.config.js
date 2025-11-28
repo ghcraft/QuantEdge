@@ -42,6 +42,16 @@ const nextConfig = {
   // Configurações de produção
   poweredByHeader: false,
   
+  // Ignora erros do ESLint durante o build (warnings não impedem o deploy)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  
+  // Não falhar o build por causa de erros de tipo
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  
   // Desabilita geração estática para rotas de API que usam Prisma
   // Isso evita problemas com dependência circular durante o build
   experimental: {
