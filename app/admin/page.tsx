@@ -8,6 +8,9 @@ import { AuthService } from "@/lib/auth";
 import Logo from "@/components/Logo";
 import FinancialChart from "@/components/FinancialChart";
 
+// Força renderização dinâmica (usa hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 interface Stats {
   totalUsers: number;
   totalFeedbacks: number;

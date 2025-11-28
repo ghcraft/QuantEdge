@@ -10,6 +10,9 @@ import ChatBot from "@/components/ChatBot";
 import Logo from "@/components/Logo";
 import { feedbackService } from "@/lib/feedback";
 
+// Força renderização dinâmica (usa hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 // Carrega FinancialChart apenas no cliente para evitar problemas de hidratação
 const FinancialChart = dynamic(() => import("@/components/FinancialChart"), {
   ssr: false,

@@ -4,6 +4,9 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
+
+// Força renderização dinâmica (usa hooks do cliente)
+export const dynamic = 'force-dynamic';
 import {
   LineChart,
   Line,

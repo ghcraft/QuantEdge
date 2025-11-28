@@ -4,6 +4,9 @@ import { useState } from "react";
 import FinancialChart from "@/components/FinancialChart";
 import Providers from "../providers";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 interface TechnicalIndicator {
   name: string;
   value: string;

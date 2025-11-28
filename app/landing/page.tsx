@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 
-const HeroScene = dynamic(() => import("@/components/HeroScene"), { ssr: false });
+const HeroScene = dynamicImport(() => import("@/components/HeroScene"), { ssr: false });
+
+// Força renderização dinâmica (usa hooks do cliente)
+export const dynamic = 'force-dynamic';
 
 /**
  * Landing Page Impactante

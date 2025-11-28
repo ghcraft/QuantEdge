@@ -8,6 +8,9 @@ import FavoriteButton from "@/components/FavoriteButton";
 import Providers from "../providers";
 import { isMarketOpen, getUpdateInterval } from "@/lib/market-hours";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 // Lista expandida de ativos - dados serão carregados via API
 interface AssetQuote {
   symbol: string;

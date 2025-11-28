@@ -5,6 +5,9 @@ import NewsFeed from "@/components/NewsFeed";
 import Providers from "../providers";
 import { NewsItem } from "@/types/news";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 const NEWS_CATEGORIES = [
   { id: "all", label: "Todas", icon: "📰" },
   { id: "mercado", label: "Mercado", icon: "📈" },

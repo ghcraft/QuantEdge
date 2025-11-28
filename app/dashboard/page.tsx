@@ -16,6 +16,9 @@ import { PortfolioService, PortfolioAsset } from "@/lib/portfolio";
 import { FavoritesService, FavoriteAsset } from "@/lib/favorites";
 import Providers from "../providers";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 /**
  * Componente de Resumo do Portfolio
  */

@@ -7,6 +7,9 @@ import { AuthService } from "@/lib/auth";
 import { adminService } from "@/lib/admin";
 import Logo from "@/components/Logo";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 /**
  * Página de Login
  * Design elegante e profissional alinhado ao tema do site

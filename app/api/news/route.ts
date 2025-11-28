@@ -6,6 +6,10 @@ import { newsRateLimiter, getClientIdentifier } from "@/lib/rate-limit";
 // Importa o módulo de inicialização para garantir que o cron job está rodando
 import "@/lib/server-init";
 
+// Força renderização dinâmica (usa request.headers)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * API Route: GET /api/news
  * Retorna as notícias salvas no arquivo JSON

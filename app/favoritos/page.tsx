@@ -8,6 +8,9 @@ import NewsFeed from "@/components/NewsFeed";
 import FollowSourceButton from "@/components/FollowSourceButton";
 import Providers from "../providers";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 // Função auxiliar para determinar tipo e símbolo do ativo
 const getAssetSymbolAndType = (asset: FavoriteAsset): { symbol: string; type: "Crypto" | "Ação" | "Ação BR" | "Índice" } => {
   if (asset.type === "crypto") {

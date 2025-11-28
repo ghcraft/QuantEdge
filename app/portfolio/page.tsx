@@ -3,6 +3,9 @@
 import PortfolioManager from "@/components/PortfolioManager";
 import Providers from "../providers";
 
+// Força renderização dinâmica (usa Context e hooks do cliente)
+export const dynamic = 'force-dynamic';
+
 /**
  * Página de Portfolio
  * Gerencie seus investimentos com funcionalidades completas
