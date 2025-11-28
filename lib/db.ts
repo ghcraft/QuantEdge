@@ -3,7 +3,7 @@
  * Singleton para evitar múltiplas instâncias
  */
 
-import { PrismaClient } from "../src/generated";
+import { PrismaClient } from "@prisma/client";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -11,11 +11,13 @@ declare global {
 }
 
 // Singleton pattern para evitar múltiplas conexões em desenvolvimento
+const prismaOptions = process.env.NODE_ENV === "development" 
+  ? { log: ["query", "error", "warn"] as const }
+  : { log: ["error"] as const };
+
 export const prisma =
   global.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
+  new PrismaClient(prismaOptions as any);
 
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
