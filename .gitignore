@@ -45,6 +45,7 @@ prisma/dev.db
 # Prisma
 /lib/generated/prisma
 node_modules/.prisma
+src/generated
 
 # NPM
 .npmrc

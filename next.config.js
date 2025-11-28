@@ -56,6 +56,11 @@ const nextConfig = {
       };
     }
     
+    // Resolve Prisma Client gerado
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@/src/generated": require("path").resolve(__dirname, "src/generated"),
+    };
     
     // Ignora warnings de módulos opcionais
     config.ignoreWarnings = [
