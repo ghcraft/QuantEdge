@@ -86,27 +86,20 @@ const nextConfig = {
     
     // Externaliza @prisma/client completamente para evitar problemas com dependência circular
     if (isServer) {
-      // Força externalização do Prisma Client
-      config.externals = config.externals || [];
-      
-      const externalizePrisma = (context, request, callback) => {
-        if (request.includes('@prisma/client') || request.includes('.prisma/client')) {
-          return callback(null, `commonjs ${request}`);
+      // Simplifica externalização do Prisma Client
+      const originalExternals = config.externals;
+      config.externals = [
+        ...(Array.isArray(originalExternals) ? originalExternals : []),
+        function(context, request, callback) {
+          if (request && (request.includes('@prisma/client') || request.includes('.prisma/client'))) {
+            return callback(null, 'commonjs ' + request);
+          }
+          if (typeof originalExternals === 'function') {
+            return originalExternals(context, request, callback);
+          }
+          callback();
         }
-        if (typeof config.externals === 'function') {
-          return config.externals(context, request, callback);
-        }
-        callback();
-      };
-      
-      if (Array.isArray(config.externals)) {
-        config.externals.push(externalizePrisma);
-      } else if (typeof config.externals === 'function') {
-        const originalExternals = config.externals;
-        config.externals = [originalExternals, externalizePrisma];
-      } else {
-        config.externals = [externalizePrisma];
-      }
+      ];
     }
     
     return config;
