@@ -84,24 +84,6 @@ const nextConfig = {
       { module: /node_modules/ },
     ];
     
-    // Externaliza @prisma/client completamente para evitar problemas com dependência circular
-    if (isServer) {
-      // Simplifica externalização do Prisma Client
-      const originalExternals = config.externals;
-      config.externals = [
-        ...(Array.isArray(originalExternals) ? originalExternals : []),
-        function(context, request, callback) {
-          if (request && (request.includes('@prisma/client') || request.includes('.prisma/client'))) {
-            return callback(null, 'commonjs ' + request);
-          }
-          if (typeof originalExternals === 'function') {
-            return originalExternals(context, request, callback);
-          }
-          callback();
-        }
-      ];
-    }
-    
     return config;
   },
   
