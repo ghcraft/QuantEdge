@@ -56,11 +56,18 @@ const nextConfig = {
       };
     }
     
-    // Resolve Prisma Client gerado
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      "@/src/generated": require("path").resolve(__dirname, "src/generated"),
-    };
+    // Resolve Prisma Client gerado - garante que o caminho relativo funcione
+    const path = require("path");
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    // Adiciona alias para garantir resolução correta
+    config.resolve.alias["@/src/generated"] = path.resolve(__dirname, "src/generated");
+    // Também resolve caminhos relativos corretamente
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      path.resolve(__dirname, "."),
+    ];
     
     // Ignora warnings de módulos opcionais
     config.ignoreWarnings = [
