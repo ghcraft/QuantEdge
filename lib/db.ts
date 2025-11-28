@@ -3,7 +3,8 @@
  * Singleton para evitar múltiplas instâncias
  */
 
-import { PrismaClient } from "@prisma/client";
+// @ts-ignore - Prisma Client gerado dinamicamente
+import { PrismaClient } from "../src/generated";
 
 declare global {
   // eslint-disable-next-line no-var
