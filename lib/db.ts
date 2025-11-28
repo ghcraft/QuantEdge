@@ -21,7 +21,7 @@ function getPrisma() {
   }
 
   // Usa require() em vez de import para evitar problemas no build
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { PrismaClient } = require("@prisma/client");
   
   const prismaOptions = process.env.NODE_ENV === "development" 
