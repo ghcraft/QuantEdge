@@ -1,42 +1,73 @@
 /**
  * Cliente Prisma para acesso ao banco de dados
  * Singleton para evitar múltiplas instâncias
+ * 
+ * IMPORTANTE: Este arquivo usa require() dinâmico para evitar problemas
+ * de dependência circular durante o build do Next.js
  */
-
-// Lazy import to avoid circular dependency issues during Next.js build
-// This ensures PrismaClient is only loaded when actually needed
-let PrismaClient: any;
-let prismaInstance: any;
 
 declare global {
   // eslint-disable-next-line no-var
   var prisma: any;
 }
 
-function getPrismaClient() {
-  if (!PrismaClient) {
-    // Dynamic import to avoid circular dependency
-    PrismaClient = require("@prisma/client").PrismaClient;
+// Lazy load PrismaClient - só carrega quando realmente necessário
+// Isso evita problemas de dependência circular durante o build
+let prismaInstance: any = null;
+
+function getPrisma() {
+  if (prismaInstance) {
+    return prismaInstance;
   }
-  return PrismaClient;
+
+  // Usa require() em vez de import para evitar problemas no build
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PrismaClient } = require("@prisma/client");
+  
+  const prismaOptions = process.env.NODE_ENV === "development" 
+    ? { log: ["query", "error", "warn"] as const }
+    : { log: ["error"] as const };
+
+  prismaInstance = new PrismaClient(prismaOptions as any);
+
+  if (process.env.NODE_ENV !== "production") {
+    global.prisma = prismaInstance;
+  }
+
+  return prismaInstance;
 }
 
-// Singleton pattern para evitar múltiplas conexões em desenvolvimento
-const prismaOptions = process.env.NODE_ENV === "development" 
-  ? { log: ["query", "error", "warn"] as const }
-  : { log: ["error"] as const };
+// Exporta uma função getter em vez de uma instância direta
+// Isso garante que o Prisma só é carregado quando necessário
+// Usa Proxy para interceptar todas as chamadas
+export const prisma = new Proxy({} as any, {
+  get(target, prop) {
+    const instance = getPrisma();
+    const value = instance[prop];
+    // Se for uma função, bind para manter o contexto
+    if (typeof value === 'function') {
+      return value.bind(instance);
+    }
+    return value;
+  },
+  ownKeys() {
+    const instance = getPrisma();
+    return Object.keys(instance);
+  },
+  has(target, prop) {
+    const instance = getPrisma();
+    return prop in instance;
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const instance = getPrisma();
+    return Object.getOwnPropertyDescriptor(instance, prop);
+  }
+});
 
-function createPrismaInstance() {
-  const PrismaClientClass = getPrismaClient();
-  return new PrismaClientClass(prismaOptions as any);
-}
-
-export const prisma =
-  global.prisma ||
-  (prismaInstance || (prismaInstance = createPrismaInstance()));
-
-if (process.env.NODE_ENV !== "production") {
-  global.prisma = prisma;
+// Helper para desconectar (útil em testes)
+export async function disconnect() {
+  const instance = getPrisma();
+  await instance.$disconnect();
 }
 
 // Helper para desconectar (útil em testes)
