@@ -16,19 +16,47 @@ export { PrismaClient } from './client';
 `;
 
 // Cria o arquivo default.js
-// Solução mais direta: Exportar diretamente do @prisma/client sem verificação complexa
-// O Node.js gerencia loops circulares através do cache de módulos
-// Quando há um loop, o Node.js retorna o objeto parcial já carregado
-// O spread operator em @prisma/client/index.js vai pegar as propriedades disponíveis
-const jsContent = `// Export from @prisma/client
+// Solução: Usar getter para acessar PrismaClient de forma lazy
+// Isso evita problemas com loops circulares
+const jsContent = `// Export from @prisma/client with lazy loading
 // This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
 // 
-// Node.js handles circular dependencies by caching modules.
-// When there's a circular dependency, Node.js returns the partially loaded module.
-// The spread operator will get whatever properties are available at that moment.
-//
-// Simply export from @prisma/client - Node.js will handle the circular dependency
-module.exports = require('@prisma/client');
+// We use a getter to lazily load PrismaClient, avoiding circular dependency issues
+// The spread operator will work with the getter
+
+const exports = {};
+
+// Use Object.defineProperty to create a lazy getter for PrismaClient
+Object.defineProperty(exports, 'PrismaClient', {
+  get: function() {
+    // Lazy load from @prisma/client when accessed
+    const prisma = require('@prisma/client');
+    return prisma.PrismaClient;
+  },
+  enumerable: true,
+  configurable: true
+});
+
+// For other properties, we can copy them immediately
+// But we need to be careful about circular dependencies
+try {
+  const prisma = require('@prisma/client');
+  // Copy all properties except PrismaClient (which we handle with getter)
+  for (const key in prisma) {
+    if (key !== 'PrismaClient' && !exports.hasOwnProperty(key)) {
+      try {
+        exports[key] = prisma[key];
+      } catch (e) {
+        // Ignore errors for individual properties
+      }
+    }
+  }
+} catch (e) {
+  // If there's an error, at least PrismaClient will work via getter
+  console.warn('Warning: Could not copy all properties from @prisma/client:', e.message);
+}
+
+module.exports = exports;
 `;
 
 // Cria default.d.ts (TypeScript types)
