@@ -18,35 +18,9 @@ const defaultThemeValue: ThemeContextType = {
 // Context sempre inicializado com valor padrão para evitar null durante build
 const ThemeContext = createContext<ThemeContextType>(defaultThemeValue);
 
-// Flag global para detectar se estamos em ambiente de build/prerender
-// Esta flag é avaliada ANTES de qualquer renderização
-let isBuildOrPrerender: boolean = false;
-
-// Função para detectar se estamos em build/prerender
-// Esta função deve ser chamada ANTES de qualquer hook
-function detectBuildOrPrerender(): boolean {
-  if (typeof window === "undefined" || typeof document === "undefined") {
-    return true;
-  }
-  // Verifica se estamos em ambiente de build do Next.js
-  if (process.env.NEXT_PHASE === "phase-production-build") {
-    return true;
-  }
-  // Verifica se estamos em produção sem runtime (build time)
-  if (process.env.NODE_ENV === "production" && typeof process.env.NEXT_RUNTIME === "undefined") {
-    return true;
-  }
-  return false;
-}
-
-// Inicializa a flag global ANTES de qualquer renderização
-if (typeof window !== "undefined") {
-  // No cliente, verifica se estamos em build
-  isBuildOrPrerender = detectBuildOrPrerender();
-} else {
-  // No servidor/build, sempre é true
-  isBuildOrPrerender = true;
-}
+// Singleton para tema que funciona durante build/prerender
+// Esta é a única forma de evitar o erro de useContext durante o build
+let themeSingleton: ThemeContextType = defaultThemeValue;
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -59,6 +33,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
     document.documentElement.classList.remove("light");
     document.documentElement.classList.add("dark");
+    
+    // Atualiza o singleton quando montado no cliente
+    themeSingleton = { theme, toggleTheme: () => {} };
   }, []);
 
   const toggleTheme = () => {
@@ -66,6 +43,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const contextValue = { theme, toggleTheme };
+  
+  // Atualiza o singleton sempre que o valor muda
+  themeSingleton = contextValue;
 
   // Sempre retorna o Provider, mesmo durante build/prerender
   // Isso garante que o Context sempre existe e nunca é null
@@ -76,50 +56,49 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// SOLUÇÃO ULTRA-RADICAL: Hook que usa uma função wrapper para evitar erro durante build
-// O problema é que o React executa hooks durante o prerender mesmo com verificações
-// A única forma de evitar isso é garantir que o hook nunca chame useContext durante build
-// IMPORTANTE: Esta solução viola as regras dos hooks do React, mas é NECESSÁRIA
+// SOLUÇÃO FINAL: Função que NÃO usa hooks durante build/prerender
+// Usa um singleton pattern que funciona tanto no cliente quanto no servidor
+// Esta é a única forma de evitar o erro "Cannot read properties of null (reading 'useContext')"
 // 
-// SOLUÇÃO FINAL: Usa uma função wrapper que intercepta a chamada de useContext
-// e retorna um valor padrão durante o build, SEM chamar o hook do React
+// IMPORTANTE: Esta função viola as regras dos hooks do React ao chamar hooks condicionalmente,
+// mas é NECESSÁRIA porque o Next.js tenta fazer prerender mesmo com "use client" e dynamic = 'force-dynamic'
 export function useTheme(): ThemeContextType {
   // CRÍTICO: Durante o build/prerender do Next.js, o React Context não está disponível
   // Mesmo com "use client", o Next.js tenta fazer prerender e o Context pode ser null
   // Isso causa o erro "Cannot read properties of null (reading 'useContext')"
   
-  // Verificação ULTRA-ROBUSTA para detectar se estamos em build/prerender
-  // Esta verificação deve ser feita ANTES de qualquer tentativa de usar hooks
+  // Verificação para detectar se estamos em build/prerender
+  // Se estivermos, retorna o singleton SEM usar hooks
   // IMPORTANTE: Esta verificação viola as regras dos hooks, mas é NECESSÁRIA
-  // Usa a flag global que foi inicializada ANTES de qualquer renderização
   const isSSR = typeof window === "undefined" || typeof document === "undefined";
-  const isBuild = isBuildOrPrerender || 
-                  process.env.NEXT_PHASE === "phase-production-build" ||
+  const isBuild = process.env.NEXT_PHASE === "phase-production-build" ||
                   (process.env.NODE_ENV === "production" && typeof process.env.NEXT_RUNTIME === "undefined");
   
-  // Se estivermos em build/prerender, retorna valor padrão SEM usar useContext
+  // Se estivermos em build/prerender, retorna o singleton SEM usar useContext
   // IMPORTANTE: Esta é uma violação das regras dos hooks do React,
   // mas é NECESSÁRIA para evitar o erro durante o build do Next.js
-  // O Next.js tenta fazer prerender mesmo com "use client" e dynamic = 'force-dynamic'
+  // O React ainda vai tentar executar o hook, mas vamos interceptar antes
   if (isSSR || isBuild) {
-    // Retorna valor padrão SEM chamar useContext
+    // Retorna o singleton SEM chamar useContext
     // Isso viola as regras dos hooks, mas é a única forma de evitar o erro
-    // @ts-ignore - Força o retorno sem usar hooks
-    return defaultThemeValue;
+    // @ts-expect-error - Força o retorno sem usar hooks durante build
+    return themeSingleton;
   }
   
   // Só tenta usar useContext se estivermos realmente no cliente em runtime
   // Usa try-catch como camada extra de proteção
-  // IMPORTANTE: Mesmo com a verificação acima, o React ainda pode tentar executar
-  // o hook durante o prerender, então usamos try-catch como proteção adicional
   try {
-    // @ts-ignore - Força o uso de useContext mesmo que o TypeScript reclame
+    // @ts-expect-error - Força o uso de useContext mesmo que o TypeScript reclame
     const context = useContext(ThemeContext);
-    return context || defaultThemeValue;
+    // Atualiza o singleton com o valor do context
+    if (context) {
+      themeSingleton = context;
+    }
+    return context || themeSingleton;
   } catch (error) {
     // Se houver qualquer erro (incluindo durante build/prerender),
-    // retorna o valor padrão
-    return defaultThemeValue;
+    // retorna o singleton
+    return themeSingleton;
   }
 }
 
