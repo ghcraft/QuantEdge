@@ -354,8 +354,13 @@ export async function fetchMultipleMarketData(
     
     const batchResults = await Promise.all(promises);
     batchResults.forEach(({ symbol, data }) => {
-      if (data && data.price > 0) {
+      if (data && data.price > 0 && !isNaN(data.price)) {
         results.set(symbol, data);
+      } else {
+        // Log apenas em desenvolvimento para não poluir logs em produção
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`[Market Data] Dados inválidos ou ausentes para ${symbol}:`, data);
+        }
       }
     });
     

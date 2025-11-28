@@ -433,10 +433,10 @@ export default function FinancialChart({
   const chartHeight = useMemo(() => {
     // Para gráficos pequenos (compactos), usa todo o espaço disponível
     if (typeof height === 'number' && height < 150) {
-      return Math.max(height, 100); // Garante mínimo de 100px
+      return Math.max(height, 200); // Garante mínimo de 200px para evitar erro do recharts
     }
     const calculated = typeof height === 'number' ? height - 100 : 250;
-    return Math.max(calculated, 200); // Garante mínimo de 200px
+    return Math.max(calculated, 200); // Garante mínimo de 200px para o gráfico
   }, [height]);
 
   if (priceData.length === 0) {
@@ -491,20 +491,19 @@ export default function FinancialChart({
       <div 
         className="relative w-full" 
         style={{ 
-          height: `${chartHeight}px`, 
+          height: `${Math.max(chartHeight, 200)}px`, 
           minHeight: "200px", 
-          maxHeight: `${chartHeight}px`, 
           width: "100%",
           position: "relative",
           display: "block"
         }}
       >
-        {chartHeight > 0 && (
+        {chartHeight >= 200 && (
           <ResponsiveContainer 
             width="100%" 
             height="100%" 
             minHeight={200} 
-            minWidth={0}
+            minWidth={300}
             debounce={1}
           >
             <AreaChart 

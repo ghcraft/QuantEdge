@@ -24,13 +24,25 @@ export async function POST(request: Request) {
     // Converte Map para objeto para serialização JSON
     const dataObject: Record<string, any> = {};
     marketData.forEach((value, key) => {
-      dataObject[key] = value;
+      // Garante que os dados são válidos antes de adicionar
+      if (value && value.price > 0 && !isNaN(value.price)) {
+        dataObject[key] = value;
+      } else {
+        console.warn(`[API Market Data] Dados inválidos para ${key}:`, value);
+      }
     });
+
+    // Log para debug (apenas em desenvolvimento)
+    if (process.env.NODE_ENV === 'development') {
+      const cryptoCount = symbols.filter(s => s.type === 'Crypto').length;
+      const cryptoReceived = Object.keys(dataObject).filter(k => k.includes('BINANCE:')).length;
+      console.log(`[API Market Data] Criptomoedas: ${cryptoReceived}/${cryptoCount} recebidas`);
+    }
 
     return NextResponse.json({
       success: true,
       data: dataObject,
-      count: marketData.size,
+      count: Object.keys(dataObject).length,
     });
   } catch (error) {
     console.error("[API Market Data] Erro:", error);
