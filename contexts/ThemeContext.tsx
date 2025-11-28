@@ -18,23 +18,30 @@ const defaultThemeValue: ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType>(defaultThemeValue);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Sempre usa tema dark
-  const theme: Theme = "dark";
+  // Durante SSR/build, retorna apenas children sem usar hooks
   const [mounted, setMounted] = useState(false);
+  const theme: Theme = "dark";
 
   useEffect(() => {
+    // Só executa no cliente
+    if (typeof window === "undefined") return;
+    
     setMounted(true);
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.remove("light");
-      document.documentElement.classList.add("dark");
-    }
+    document.documentElement.classList.remove("light");
+    document.documentElement.classList.add("dark");
   }, []);
 
   const toggleTheme = () => {
     // Função vazia - tema sempre dark
   };
 
-  // Fornece um valor padrão durante SSR/build
+  // Durante SSR/build, retorna children diretamente sem Provider
+  // Isso evita o erro de useContext durante prerender
+  if (typeof window === "undefined" || !mounted) {
+    return <>{children}</>;
+  }
+
+  // No cliente, usa o Provider normalmente
   const contextValue = { theme, toggleTheme };
 
   return (
@@ -45,8 +52,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTheme() {
-  // Sempre retorna um valor válido, mesmo durante SSR/build
-  // O Context sempre terá um valor padrão, então nunca será undefined
+  // Durante SSR/build, retorna valor padrão
+  if (typeof window === "undefined") {
+    return defaultThemeValue;
+  }
+  
+  // No cliente, usa o Context normalmente
   const context = useContext(ThemeContext);
   return context;
 }
