@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 import { AuthService } from "@/lib/auth";
 import Footer from "@/components/Footer";
 import ChatBot from "@/components/ChatBot";
@@ -14,7 +14,7 @@ import { feedbackService } from "@/lib/feedback";
 export const dynamic = 'force-dynamic';
 
 // Carrega FinancialChart apenas no cliente para evitar problemas de hidratação
-const FinancialChart = dynamic(() => import("@/components/FinancialChart"), {
+const FinancialChart = dynamicImport(() => import("@/components/FinancialChart"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[350px] bg-dark-card/50 rounded-lg flex items-center justify-center">
