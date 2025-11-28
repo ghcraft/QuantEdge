@@ -75,15 +75,8 @@ async function fetchFeedNews(
     return newsItems;
   } catch (error) {
     // Em caso de erro, retorna array vazio
-    // Só loga erros em desenvolvimento, não em produção/build
-    // Verifica se está em ambiente de desenvolvimento E não está em build
-    const isDev = process.env.NODE_ENV === "development";
-    const isBuild = process.env.NEXT_PHASE === "phase-production-build" || 
-                     process.env.VERCEL === "1" && process.env.VERCEL_ENV === "production";
-    
-    if (isDev && !isBuild) {
-      console.error(`Erro ao buscar feed ${feedName}:`, error);
-    }
+    // NÃO loga erros em produção para não poluir logs
+    // Apenas retorna array vazio silenciosamente
     return [];
   }
 }
@@ -115,16 +108,27 @@ export async function fetchAllNews(): Promise<NewsItem[]> {
         )
     );
 
+    // Se não há notícias, retorna array vazio
+    if (uniqueNews.length === 0) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[RSS] Nenhuma notícia encontrada em nenhum feed");
+      }
+      return [];
+    }
+
     // Embaralha e pega entre 5 e 10 notícias (mais fontes disponíveis)
     const shuffled = uniqueNews.sort(() => Math.random() - 0.5);
     const count = Math.min(
       Math.max(5, Math.floor(Math.random() * 6) + 5), // Entre 5 e 10
       shuffled.length
     );
-
+    
     return shuffled.slice(0, count);
   } catch (error) {
-    console.error("Erro ao buscar notícias:", error);
+    // Log apenas em desenvolvimento
+    if (process.env.NODE_ENV === "development") {
+      console.error("Erro ao buscar notícias:", error);
+    }
     return [];
   }
 }

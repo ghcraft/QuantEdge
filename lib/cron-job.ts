@@ -26,7 +26,14 @@ async function updateNews(): Promise<void> {
         `✅ Atualização concluída! ${news.length} notícias em ${duration}ms`
       );
     } else {
-      console.warn("⚠️ Nenhuma notícia encontrada");
+      // Log apenas em desenvolvimento
+      if (process.env.NODE_ENV === "development") {
+        console.warn("⚠️ Nenhuma notícia encontrada - verificando feeds disponíveis...");
+      }
+      // Tenta buscar notícias novamente após 60 segundos se não encontrou nada
+      setTimeout(() => {
+        updateNews();
+      }, 60000);
     }
   } catch (error) {
     console.error("❌ Erro na atualização de notícias:", error);

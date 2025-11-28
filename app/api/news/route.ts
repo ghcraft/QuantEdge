@@ -55,8 +55,17 @@ export async function GET(request: Request) {
       30000 // 30 segundos
     );
 
-    if (!newsData) {
-      // Se não há notícias ainda, retorna array vazio
+    if (!newsData || !newsData.news || newsData.news.length === 0) {
+      // Se não há notícias ainda, força atualização em background e retorna array vazio
+      // Não bloqueia a resposta - atualiza em background
+      import("@/lib/cron-job").then(({ updateNewsNow }) => {
+        updateNewsNow().catch(() => {
+          // Ignora erros em background
+        });
+      }).catch(() => {
+        // Ignora erros de import
+      });
+      
       return NextResponse.json({
         lastUpdate: null,
         news: [],

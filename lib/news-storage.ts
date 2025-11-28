@@ -1,10 +1,18 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { NewsData, NewsItem } from "@/types/news";
+import { memoryCache } from "@/lib/cache";
 
 // Caminho do arquivo JSON onde as notícias serão salvas
-const DATA_DIR = path.join(process.cwd(), "data");
+// Na Vercel, usa /tmp (único diretório writable)
+// Em desenvolvimento/local, usa data/
+const DATA_DIR = process.env.VERCEL 
+  ? "/tmp" 
+  : path.join(process.cwd(), "data");
 const NEWS_FILE = path.join(DATA_DIR, "news.json");
+
+// Chave para cache em memória (fallback para Vercel onde /tmp é efêmero)
+const MEMORY_CACHE_KEY = "news:storage";
 
 /**
  * Garante que o diretório data existe
@@ -25,18 +33,36 @@ async function ensureDataDir(): Promise<void> {
  */
 export async function saveNews(news: NewsItem[]): Promise<void> {
   try {
-    // Garante que o diretório existe
-    await ensureDataDir();
-
     // Cria o objeto de dados com timestamp
     const data: NewsData = {
       lastUpdate: new Date().toISOString(),
       news: news,
     };
 
-    // Salva no arquivo JSON
-    await fs.writeFile(NEWS_FILE, JSON.stringify(data, null, 2), "utf-8");
-    console.log(`✅ ${news.length} notícias salvas em ${NEWS_FILE}`);
+    // SEMPRE salva em memória primeiro (funciona em qualquer ambiente)
+    memoryCache.set(MEMORY_CACHE_KEY, data, 3600000); // 1 hora de cache
+
+    // Tenta salvar no arquivo (pode falhar na Vercel, mas não é crítico)
+    try {
+      await ensureDataDir();
+      await fs.writeFile(NEWS_FILE, JSON.stringify(data, null, 2), "utf-8");
+      
+      if (process.env.NODE_ENV === "development") {
+        console.log(`✅ ${news.length} notícias salvas em ${NEWS_FILE}`);
+      }
+    } catch (fileError) {
+      // Se falhar ao salvar em arquivo, não é crítico - já está em memória
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Aviso: Não foi possível salvar em arquivo, usando apenas cache em memória:", fileError);
+      }
+    }
+    
+    // Log de sucesso
+    if (process.env.NODE_ENV === "development") {
+      console.log(`✅ ${news.length} notícias salvas (memória + arquivo)`);
+    } else {
+      console.log(`✅ ${news.length} notícias salvas`);
+    }
   } catch (error) {
     console.error("Erro ao salvar notícias:", error);
     throw error;
@@ -48,14 +74,27 @@ export async function saveNews(news: NewsItem[]): Promise<void> {
  * @returns Dados das notícias ou null se o arquivo não existir
  */
 export async function loadNews(): Promise<NewsData | null> {
+  // Primeiro tenta carregar do cache em memória (mais rápido e funciona sempre)
+  const cachedData = memoryCache.get<NewsData>(MEMORY_CACHE_KEY);
+  if (cachedData) {
+    return cachedData;
+  }
+
+  // Se não está em cache, tenta carregar do arquivo
   try {
-    // Tenta ler o arquivo
     const fileContent = await fs.readFile(NEWS_FILE, "utf-8");
     const data: NewsData = JSON.parse(fileContent);
+    
+    // Salva no cache em memória para próximas leituras
+    memoryCache.set(MEMORY_CACHE_KEY, data, 3600000); // 1 hora
+    
     return data;
   } catch (error) {
     // Se o arquivo não existe ou há erro, retorna null
-    console.log("Arquivo de notícias não encontrado, será criado na primeira atualização");
+    // O cron job criará as notícias na próxima execução
+    if (process.env.NODE_ENV === "development") {
+      console.log("Arquivo de notícias não encontrado, será criado na primeira atualização");
+    }
     return null;
   }
 }
