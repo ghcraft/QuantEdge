@@ -26,16 +26,18 @@ export { PrismaClient } from './client';
 // Cria o arquivo default.js
 // IMPORTANTE: O arquivo precisa ser CommonJS puro
 // Criamos package.json acima para garantir que seja tratado como CommonJS
+// Em CommonJS, 'exports' já existe, então usamos um nome diferente
 const jsContent = `// Export from @prisma/client with lazy loading
 // This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
 // 
 // IMPORTANT: This file MUST be CommonJS (enforced by package.json in this directory)
 // We use a getter to lazily load PrismaClient, avoiding circular dependency issues
+// Note: In CommonJS, 'exports' is already defined, so we use a different variable name
 
-const exports = {};
+const prismaExports = {};
 
 // Use Object.defineProperty to create a lazy getter for PrismaClient
-Object.defineProperty(exports, 'PrismaClient', {
+Object.defineProperty(prismaExports, 'PrismaClient', {
   get: function() {
     // Lazy load from @prisma/client when accessed
     const prisma = require('@prisma/client');
@@ -51,9 +53,9 @@ try {
   const prisma = require('@prisma/client');
   // Copy all properties except PrismaClient (which we handle with getter)
   for (const key in prisma) {
-    if (key !== 'PrismaClient' && !exports.hasOwnProperty(key)) {
+    if (key !== 'PrismaClient' && !prismaExports.hasOwnProperty(key)) {
       try {
-        exports[key] = prisma[key];
+        prismaExports[key] = prisma[key];
       } catch (e) {
         // Ignore errors for individual properties
       }
@@ -67,7 +69,7 @@ try {
   }
 }
 
-module.exports = exports;
+module.exports = prismaExports;
 `;
 
 // Cria default.d.ts (TypeScript types)
