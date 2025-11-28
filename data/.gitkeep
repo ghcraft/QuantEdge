@@ -1,0 +1,3 @@
+# Este arquivo garante que o diretório data/ seja criado no git
+# O arquivo news.json será gerado automaticamente pelo sistema
+

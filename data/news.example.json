@@ -1,0 +1,15 @@
+{
+  "lastUpdate": "2024-01-01T12:00:00.000Z",
+  "news": [
+    {
+      "id": "Reuters Business-1704110400000-0",
+      "title": "Exemplo de Notícia Financeira",
+      "link": "https://www.reuters.com/article/example",
+      "pubDate": "2024-01-01T12:00:00.000Z",
+      "source": "Reuters Business",
+      "description": "Esta é uma notícia de exemplo que será substituída pelas notícias reais quando o cron job rodar.",
+      "content": "Conteúdo completo da notícia..."
+    }
+  ]
+}
+

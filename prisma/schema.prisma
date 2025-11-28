@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Modelo de Usuário
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // Hash bcrypt
+  createdAt DateTime @default(now())
+  lastLogin DateTime?
+  
+  // Relações
+  portfolioAssets PortfolioAsset[]
+  favoriteAssets  FavoriteAsset[]
+  feedbacks       Feedback[]
+  
+  @@index([email])
+}
+
+// Modelo de Ativo do Portfólio
+model PortfolioAsset {
+  id          String   @id @default(cuid())
+  userId      String
+  symbol      String
+  name        String
+  type        String   // "Crypto" | "Ação" | "Ação BR" | "Índice"
+  quantity    Float
+  avgPrice    Float
+  currentPrice Float?
+  exchange    String?
+  addedAt     DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([symbol])
+}
+
+// Modelo de Ativo Favorito
+model FavoriteAsset {
+  id        String   @id @default(cuid())
+  userId    String
+  symbol    String
+  name      String
+  type      String   // "crypto" | "stock" | "index"
+  exchange  String?
+  addedAt   DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, symbol])
+  @@index([userId])
+}
+
+// Modelo de Feedback
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  name      String
+  email     String
+  message   String
+  rating    Int?     // 1-5
+  isPublic  Boolean  @default(false)
+  approved  Boolean  @default(false)
+  rejected  Boolean  @default(false)
+  approvedAt DateTime?
+  rejectedAt DateTime?
+  createdAt DateTime @default(now())
+  
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([isPublic, approved, rejected])
+  @@index([createdAt])
+}
+
+// Modelo de Transação do Portfólio
+model PortfolioTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  assetId     String
+  type        String   // "buy" | "sell"
+  quantity    Float
+  price       Float
+  total       Float
+  fee         Float    @default(0)
+  notes       String?
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([assetId])
+  @@index([createdAt])
+}
