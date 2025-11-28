@@ -9,18 +9,21 @@ import { useEffect, useState } from "react";
  */
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
-  const { theme, toggleTheme } = useTheme();
   
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Evita erro de hidratação
+  // Evita erro de hidratação e prerender
+  // Não chama useTheme() durante SSR/prerender
   if (!mounted) {
     return (
       <div className="w-14 h-7 bg-dark-card/50 light:bg-light-card/50 backdrop-blur-sm border border-dark-border light:border-light-border rounded-full"></div>
     );
   }
+  
+  // Só chama useTheme() após montagem no cliente
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <button
