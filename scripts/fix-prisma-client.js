@@ -4,11 +4,19 @@ const path = require('path');
 const prismaClientPath = path.resolve(__dirname, '../node_modules/.prisma/client');
 const defaultDtsPath = path.join(prismaClientPath, 'default.d.ts');
 const defaultJsPath = path.join(prismaClientPath, 'default.js');
+const packageJsonPath = path.join(prismaClientPath, 'package.json');
 
 if (!fs.existsSync(prismaClientPath)) {
   console.warn('⚠️  Prisma Client not found, skipping default.d.ts/default.js creation');
   process.exit(1);
 }
+
+// Cria package.json para forçar CommonJS
+const packageJsonContent = {
+  type: "commonjs"
+};
+fs.writeFileSync(packageJsonPath, JSON.stringify(packageJsonContent, null, 2));
+console.log('✅ Created package.json to force CommonJS');
 
 // Cria o arquivo default.d.ts que re-exporta do client.ts
 const dtsContent = `export * from './client';
@@ -16,13 +24,13 @@ export { PrismaClient } from './client';
 `;
 
 // Cria o arquivo default.js
-// Solução: Usar getter para acessar PrismaClient de forma lazy
-// Isso evita problemas com loops circulares
+// IMPORTANTE: O arquivo precisa ser CommonJS puro
+// Criamos package.json acima para garantir que seja tratado como CommonJS
 const jsContent = `// Export from @prisma/client with lazy loading
 // This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
 // 
+// IMPORTANT: This file MUST be CommonJS (enforced by package.json in this directory)
 // We use a getter to lazily load PrismaClient, avoiding circular dependency issues
-// The spread operator will work with the getter
 
 const exports = {};
 
@@ -53,7 +61,10 @@ try {
   }
 } catch (e) {
   // If there's an error, at least PrismaClient will work via getter
-  console.warn('Warning: Could not copy all properties from @prisma/client:', e.message);
+  // Don't log in production to avoid noise
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('Warning: Could not copy all properties from @prisma/client:', e.message);
+  }
 }
 
 module.exports = exports;
