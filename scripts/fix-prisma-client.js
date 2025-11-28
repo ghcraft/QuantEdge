@@ -10,8 +10,28 @@ const dtsContent = `export * from './client';
 export { PrismaClient } from './client';
 `;
 
-// Cria o arquivo default.js que re-exporta do client.js
-const jsContent = `module.exports = require('./client');
+// Cria o arquivo default.js
+// O problema: @prisma/client/index.js faz: ...require('.prisma/client/default')
+// Mas o Prisma 7 gera apenas .ts, não .js
+// Solução: Como o Prisma gera apenas TypeScript, precisamos usar uma abordagem diferente
+// Vamos criar um arquivo que exporta do @prisma/client, mas usando uma flag para evitar loop
+// O spread operator no @prisma/client/index.js apenas espalha propriedades, então não há loop real
+const jsContent = `// Export from @prisma/client
+// This file is required by @prisma/client/index.js: ...require('.prisma/client/default')
+// The spread operator only spreads properties, so circular require is safe
+// We use a flag to prevent infinite recursion during module loading
+if (global.__prisma_default_loading) {
+  // If already loading, return empty object to break circular dependency
+  module.exports = {};
+} else {
+  global.__prisma_default_loading = true;
+  try {
+    const prisma = require('@prisma/client');
+    module.exports = prisma;
+  } finally {
+    delete global.__prisma_default_loading;
+  }
+}
 `;
 
 if (fs.existsSync(prismaClientPath)) {
@@ -31,4 +51,3 @@ if (fs.existsSync(prismaClientPath)) {
   console.warn('⚠️  Prisma Client not found, skipping default.d.ts/default.js creation');
   process.exit(1);
 }
-
