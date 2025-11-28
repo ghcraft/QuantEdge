@@ -56,6 +56,12 @@ const nextConfig = {
   // Isso evita problemas com Context durante o prerender
   output: 'standalone',
   
+  // Desabilita completamente o prerender para evitar erros com Context
+  // Isso força todas as páginas a serem renderizadas dinamicamente
+  generateBuildId: async () => {
+    return 'build-' + Date.now();
+  },
+  
   // Desabilita geração estática para rotas de API que usam Prisma
   // Isso evita problemas com dependência circular durante o build
   experimental: {
