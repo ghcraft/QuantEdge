@@ -35,8 +35,9 @@ export default function DemoPage() {
 
   useEffect(() => {
     // Verifica se já está autenticado
-    const checkAuth = () => {
-      if (AuthService.isAuthenticated()) {
+    const checkAuth = async () => {
+      const isAuthenticated = await AuthService.isAuthenticated();
+      if (isAuthenticated) {
         setIsAuthenticated(true);
         // Redireciona para dashboard após 1 segundo
         setTimeout(() => {

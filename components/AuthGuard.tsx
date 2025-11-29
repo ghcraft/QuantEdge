@@ -31,12 +31,12 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     if (!isMounted) return;
 
     // Pequeno delay para garantir que está no cliente
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       try {
         // Verifica se está no cliente
         if (typeof window === "undefined") return;
 
-        const isAuthenticated = AuthService.isAuthenticated();
+        const isAuthenticated = await AuthService.isAuthenticated();
         const isPublicRoute = publicRoutes.includes(pathname);
 
         if (!isAuthenticated && !isPublicRoute) {

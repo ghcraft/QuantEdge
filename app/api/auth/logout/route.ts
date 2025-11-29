@@ -1,19 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-// Force dynamic rendering to avoid Prisma issues during build
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
-/**
- * POST /api/auth/logout
- * Faz logout do usuário (remove cookie)
- */
 export async function POST(request: NextRequest) {
-  const response = NextResponse.json({ success: true });
+  try {
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '');
 
-  // Remove cookie de autenticação
-  response.cookies.delete("auth_token");
+    if (token) {
+      // Remove sessão do banco
+      await prisma.session.deleteMany({
+        where: { token },
+      });
+    }
 
-  return response;
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Erro ao fazer logout:', error);
+    return NextResponse.json(
+      { success: false, error: 'Erro ao fazer logout' },
+      { status: 500 }
+    );
+  }
 }
-

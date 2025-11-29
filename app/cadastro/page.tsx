@@ -28,8 +28,9 @@ export default function CadastroPage() {
 
   useEffect(() => {
     // Se já estiver autenticado, redireciona para home
-    const checkAuth = () => {
-      if (AuthService.isAuthenticated()) {
+    const checkAuth = async () => {
+      const isAuthenticated = await AuthService.isAuthenticated();
+      if (isAuthenticated) {
         router.push("/");
       }
     };
@@ -61,14 +62,19 @@ export default function CadastroPage() {
 
     setLoading(true);
 
-    const result = AuthService.register(formData.email, formData.password, formData.name);
+    try {
+      const result = await AuthService.register(formData.email, formData.password, formData.name);
 
-    if (result.success) {
-      // Auto-login após cadastro - redireciona direto para dashboard
-      router.push("/dashboard");
-      router.refresh();
-    } else {
-      setError(result.error || "Erro ao criar conta");
+      if (result.success) {
+        // Auto-login após cadastro - redireciona direto para dashboard
+        router.push("/dashboard");
+        router.refresh();
+      } else {
+        setError(result.error || "Erro ao criar conta");
+        setLoading(false);
+      }
+    } catch (error) {
+      setError("Erro ao criar conta. Tente novamente.");
       setLoading(false);
     }
   };

@@ -1,7 +1,8 @@
 /**
  * Sistema de Autenticação
  * Gerencia login, cadastro e sessão de usuários
- * Usa localStorage para persistência (em produção, usar backend real)
+ * Agora usa backend (APIs) para funcionar entre dispositivos
+ * Mantém compatibilidade com localStorage para fallback
  */
 
 export interface User {
@@ -24,8 +25,24 @@ export interface AuthSession {
 export const AuthService = {
   /**
    * Registra um novo usuário
+   * Tenta usar API primeiro, fallback para localStorage
    */
-  register(email: string, password: string, name: string): { success: boolean; error?: string } {
+  async register(email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> {
+    // Tenta usar API primeiro
+    if (typeof window !== "undefined") {
+      try {
+        const { AuthServiceAPI } = await import("./auth-api");
+        const result = await AuthServiceAPI.register(email, password, name);
+        if (result.success) {
+          return { success: true };
+        }
+        // Se API falhar, continua com localStorage (fallback)
+      } catch (error) {
+        console.warn("API de autenticação não disponível, usando localStorage:", error);
+      }
+    }
+
+    // Fallback para localStorage (compatibilidade)
     if (typeof window === "undefined") {
       return { success: false, error: "Apenas no cliente" };
     }
@@ -91,12 +108,28 @@ export const AuthService = {
     this.createSession(newUser);
 
     return { success: true };
-  },
+  } as any, // Type assertion para compatibilidade
 
   /**
    * Faz login do usuário
+   * Tenta usar API primeiro, fallback para localStorage
    */
-  login(email: string, password: string): { success: boolean; error?: string; user?: User } {
+  async login(email: string, password: string): Promise<{ success: boolean; error?: string; user?: User }> {
+    // Tenta usar API primeiro
+    if (typeof window !== "undefined") {
+      try {
+        const { AuthServiceAPI } = await import("./auth-api");
+        const result = await AuthServiceAPI.login(email, password);
+        if (result.success) {
+          return { success: true, user: result.user };
+        }
+        // Se API falhar, continua com localStorage (fallback)
+      } catch (error) {
+        console.warn("API de autenticação não disponível, usando localStorage:", error);
+      }
+    }
+
+    // Fallback para localStorage (compatibilidade)
     if (typeof window === "undefined") {
       return { success: false, error: "Apenas no cliente" };
     }
@@ -127,18 +160,32 @@ export const AuthService = {
     user.lastLogin = new Date().toISOString();
     const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
     localStorage.setItem("users", JSON.stringify(updatedUsers));
+    this.syncToCookies("users", updatedUsers);
 
     // Cria sessão
     this.createSession(user);
 
     return { success: true, user };
-  },
+  } as any, // Type assertion para compatibilidade
 
   /**
    * Faz logout
    * Remove de localStorage e cookies
+   * Tenta usar API primeiro
    */
-  logout(): void {
+  async logout(): Promise<void> {
+    // Tenta usar API primeiro
+    if (typeof window !== "undefined") {
+      try {
+        const { AuthServiceAPI } = await import("./auth-api");
+        await AuthServiceAPI.logout();
+        return;
+      } catch (error) {
+        console.warn("API de autenticação não disponível, usando localStorage:", error);
+      }
+    }
+
+    // Fallback para localStorage (compatibilidade)
     if (typeof window === "undefined") return;
     localStorage.removeItem("authSession");
     // Remove cookie também
@@ -150,8 +197,20 @@ export const AuthService = {
 
   /**
    * Verifica se usuário está autenticado
+   * Tenta usar API primeiro, fallback para localStorage
    */
-  isAuthenticated(): boolean {
+  async isAuthenticated(): Promise<boolean> {
+    // Tenta usar API primeiro
+    if (typeof window !== "undefined") {
+      try {
+        const { AuthServiceAPI } = await import("./auth-api");
+        return await AuthServiceAPI.isAuthenticated();
+      } catch (error) {
+        console.warn("API de autenticação não disponível, usando localStorage:", error);
+      }
+    }
+
+    // Fallback para localStorage (compatibilidade)
     if (typeof window === "undefined") return false;
     const session = this.getSession();
     if (!session) return false;
@@ -163,19 +222,31 @@ export const AuthService = {
     }
 
     return true;
-  },
+  } as any, // Type assertion para compatibilidade
 
   /**
    * Obtém usuário atual
+   * Tenta usar API primeiro, fallback para localStorage
    */
-  getCurrentUser(): User | null {
+  async getCurrentUser(): Promise<User | null> {
+    // Tenta usar API primeiro
+    if (typeof window !== "undefined") {
+      try {
+        const { AuthServiceAPI } = await import("./auth-api");
+        return await AuthServiceAPI.getCurrentUser();
+      } catch (error) {
+        console.warn("API de autenticação não disponível, usando localStorage:", error);
+      }
+    }
+
+    // Fallback para localStorage (compatibilidade)
     if (typeof window === "undefined") return null;
     const session = this.getSession();
     if (!session || Date.now() > session.expiresAt) {
       return null;
     }
     return session.user;
-  },
+  } as any, // Type assertion para compatibilidade
 
   /**
    * Cria sessão de autenticação

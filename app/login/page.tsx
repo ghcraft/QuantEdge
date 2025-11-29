@@ -24,8 +24,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     // Se já estiver autenticado, redireciona para home
-    const checkAuth = () => {
-      if (AuthService.isAuthenticated()) {
+    const checkAuth = async () => {
+      const isAuthenticated = await AuthService.isAuthenticated();
+      if (isAuthenticated) {
         router.push("/");
       }
     };
@@ -52,7 +53,7 @@ export default function LoginPage() {
       }
 
       // Se não for admin, tenta login normal
-      const result = AuthService.login(email, password);
+      const result = await AuthService.login(email, password);
 
       if (result.success) {
         router.push("/dashboard");

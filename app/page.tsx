@@ -23,11 +23,11 @@ export default function Home() {
   useEffect(() => {
     if (!isMounted) return;
 
-    const checkAuth = () => {
+    const checkAuth = async () => {
       if (typeof window === "undefined") return;
       
       try {
-        const isAuthenticated = AuthService.isAuthenticated();
+        const isAuthenticated = await AuthService.isAuthenticated();
         
         if (isAuthenticated) {
           // Se autenticado, redireciona para dashboard

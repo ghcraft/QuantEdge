@@ -394,23 +394,29 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    if (typeof window !== "undefined") {
-      const currentUser = AuthService.getCurrentUser();
-      if (currentUser) {
-        setUser({ name: currentUser.name, email: currentUser.email });
+    const loadUser = async () => {
+      if (typeof window !== "undefined") {
+        const currentUser = await AuthService.getCurrentUser();
+        if (currentUser) {
+          setUser({ name: currentUser.name, email: currentUser.email });
+        }
       }
-    }
+    };
+    loadUser();
   }, []);
 
   useEffect(() => {
     if (!isMounted) return;
 
-    if (typeof window !== "undefined") {
-      const isAuthenticated = AuthService.isAuthenticated();
-      if (!isAuthenticated) {
-        router.replace("/demo");
+    const checkAuth = async () => {
+      if (typeof window !== "undefined") {
+        const isAuthenticated = await AuthService.isAuthenticated();
+        if (!isAuthenticated) {
+          router.replace("/demo");
+        }
       }
-    }
+    };
+    checkAuth();
   }, [router, isMounted]);
 
   if (!isMounted) {
@@ -496,7 +502,7 @@ export default function DashboardPage() {
                       Resumo do Portfolio
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
                     Visão geral dos seus investimentos e performance
                   </p>
                 </div>
@@ -514,7 +520,7 @@ export default function DashboardPage() {
                       Indicadores do Mercado
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
                     Principais índices e indicadores em tempo real
                   </p>
                 </div>
@@ -535,9 +541,9 @@ export default function DashboardPage() {
                           Acesso Rápido
                         </h2>
                       </div>
-                      <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
-                        Navegação rápida para principais funcionalidades
-                      </p>
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
+                    Navegação rápida para principais funcionalidades
+                  </p>
                     </div>
                     <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                       <QuickAccess />
@@ -553,9 +559,9 @@ export default function DashboardPage() {
                           Favoritos Recentes
                         </h2>
                       </div>
-                      <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
-                        Seus ativos favoritos mais recentes com gráficos
-                      </p>
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
+                    Seus ativos favoritos mais recentes com gráficos
+                  </p>
                     </div>
                     <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                       <RecentFavorites />
@@ -573,7 +579,7 @@ export default function DashboardPage() {
                       Destaques do Dia
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
                     Maiores ganhadores e perdedores do mercado
                   </p>
                 </div>
@@ -591,7 +597,7 @@ export default function DashboardPage() {
                       Visão Geral do Mercado
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
                     Gráficos interativos em tempo real de ações, índices e criptomoedas
                   </p>
                 </div>
@@ -609,7 +615,7 @@ export default function DashboardPage() {
                       Notícias Financeiras
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted font-normal ml-3">
                     Últimas atualizações e análises do mercado financeiro
                   </p>
                 </div>

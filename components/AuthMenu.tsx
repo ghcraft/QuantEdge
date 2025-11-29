@@ -17,8 +17,8 @@ export default function AuthMenu() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const authenticated = AuthService.isAuthenticated();
+    const checkAuth = async () => {
+      const authenticated = await AuthService.isAuthenticated();
       
       // Atualiza apenas se o estado realmente mudou
       setIsAuthenticated((prev) => {
@@ -29,7 +29,7 @@ export default function AuthMenu() {
       });
       
       if (authenticated) {
-        const currentUser = AuthService.getCurrentUser();
+        const currentUser = await AuthService.getCurrentUser();
         if (currentUser) {
           const newUser = { name: currentUser.name, email: currentUser.email };
           setUser((prev) => {
@@ -67,8 +67,8 @@ export default function AuthMenu() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    AuthService.logout();
+  const handleLogout = async () => {
+    await AuthService.logout();
     setIsAuthenticated(false);
     setUser(null);
     setIsOpen(false);
