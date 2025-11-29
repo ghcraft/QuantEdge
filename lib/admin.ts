@@ -60,17 +60,10 @@ class AdminService {
     const emailMatch = cleanEmail === expectedEmail;
     const passwordMatch = cleanPassword === expectedPassword;
     
-    // Debug no console
-    if (typeof window !== "undefined") {
-      console.log("=== DEBUG LOGIN ===");
-      console.log("Email recebido:", cleanEmail);
-      console.log("Email esperado:", expectedEmail);
-      console.log("Email match:", emailMatch);
-      console.log("Senha recebida (length):", cleanPassword.length);
-      console.log("Senha esperada (length):", expectedPassword.length);
-      console.log("Senha match:", passwordMatch);
-      console.log("Senha esperada completa:", expectedPassword);
-      console.log("===================");
+    // Logs de debug removidos por segurança (não expor credenciais)
+    // Apenas log em desenvolvimento e sem informações sensíveis
+    if (typeof window !== "undefined" && process.env.NODE_ENV === 'development') {
+      console.log("Admin login attempt:", { emailMatch, passwordLength: cleanPassword.length });
     }
     
     if (emailMatch && passwordMatch) {
@@ -88,14 +81,10 @@ class AdminService {
       return { success: true, message: "Autenticação realizada com sucesso" };
     }
     
-    // Mensagem de erro detalhada
-    const issues = [];
-    if (!emailMatch) issues.push("Email incorreto");
-    if (!passwordMatch) issues.push("Senha incorreta");
-    
+    // Mensagem de erro genérica (não revela qual campo está errado por segurança)
     return { 
       success: false, 
-      message: `Credenciais inválidas: ${issues.join(" e ")}. Verifique as credenciais exibidas acima.` 
+      message: "Credenciais inválidas. Verifique seu email e senha." 
     };
   }
 
