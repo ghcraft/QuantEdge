@@ -410,13 +410,25 @@ export default function DashboardPage() {
 
     const checkAuth = async () => {
       if (typeof window !== "undefined") {
-        const isAuthenticated = await AuthService.isAuthenticated();
-        if (!isAuthenticated) {
-          router.replace("/demo");
+        try {
+          const isAuthenticated = await AuthService.isAuthenticated();
+          if (!isAuthenticated) {
+            router.replace("/demo");
+          }
+        } catch (error) {
+          console.error("Erro ao verificar autenticação:", error);
+          // Em caso de erro, verifica se há token no localStorage
+          const session = localStorage.getItem("authSession");
+          if (!session) {
+            router.replace("/demo");
+          }
         }
       }
     };
-    checkAuth();
+    
+    // Adiciona um pequeno delay para garantir que o token foi salvo após o login
+    const timer = setTimeout(checkAuth, 500);
+    return () => clearTimeout(timer);
   }, [router, isMounted]);
 
   if (!isMounted) {

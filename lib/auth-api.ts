@@ -107,7 +107,21 @@ export const AuthServiceAPI = {
    */
   async isAuthenticated(): Promise<boolean> {
     const token = this.getToken();
-    if (!token) return false;
+    if (!token) {
+      // Verifica se há sessão no localStorage (fallback)
+      const session = localStorage.getItem("authSession");
+      if (session) {
+        try {
+          const parsed = JSON.parse(session);
+          if (parsed.expiresAt && Date.now() < parsed.expiresAt) {
+            return true;
+          }
+        } catch {
+          return false;
+        }
+      }
+      return false;
+    }
 
     try {
       const response = await fetch('/api/auth/session', {
@@ -115,7 +129,26 @@ export const AuthServiceAPI = {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+        cache: 'no-store', // Evita cache
       });
+
+      if (!response.ok) {
+        // Se a API falhar, verifica localStorage como fallback
+        const session = localStorage.getItem("authSession");
+        if (session) {
+          try {
+            const parsed = JSON.parse(session);
+            if (parsed.expiresAt && Date.now() < parsed.expiresAt) {
+              return true;
+            }
+          } catch {
+            this.removeToken();
+            return false;
+          }
+        }
+        this.removeToken();
+        return false;
+      }
 
       const data = await response.json();
       
@@ -130,6 +163,18 @@ export const AuthServiceAPI = {
       return false;
     } catch (error) {
       console.error('Erro ao verificar autenticação:', error);
+      // Em caso de erro de rede, verifica localStorage como fallback
+      const session = localStorage.getItem("authSession");
+      if (session) {
+        try {
+          const parsed = JSON.parse(session);
+          if (parsed.expiresAt && Date.now() < parsed.expiresAt) {
+            return true;
+          }
+        } catch {
+          return false;
+        }
+      }
       return false;
     }
   },
