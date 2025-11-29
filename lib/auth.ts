@@ -25,26 +25,33 @@ export interface AuthSession {
 export const AuthService = {
   /**
    * Registra um novo usuário
-   * Tenta usar API primeiro, fallback para localStorage
+   * SEMPRE usa API para funcionar entre dispositivos
+   * Não permite fallback para localStorage
    */
   async register(email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> {
-    // Tenta usar API primeiro
+    // SEMPRE tenta usar API primeiro (obrigatório para funcionar entre dispositivos)
     if (typeof window !== "undefined") {
       try {
         const { AuthServiceAPI } = await import("./auth-api");
         const result = await AuthServiceAPI.register(email, password, name);
         if (result.success) {
+          // Auto-login após registro bem-sucedido
+          if (result.token && result.user) {
+            this.saveToken(result.token, result.user);
+          }
           return { success: true };
         }
-        // Se API falhar, continua com localStorage (fallback)
+        // Se API falhar, retorna erro (não permite fallback)
+        return { success: false, error: result.error || "Erro ao criar conta. Tente novamente." };
       } catch (error) {
-        console.warn("API de autenticação não disponível, usando localStorage:", error);
+        console.error("Erro ao registrar via API:", error);
+        return { success: false, error: "Erro ao conectar com o servidor. Verifique sua conexão." };
       }
     }
 
-    // Fallback para localStorage (compatibilidade)
+    // Apenas no servidor (não deveria acontecer)
     if (typeof window === "undefined") {
-      return { success: false, error: "Apenas no cliente" };
+      return { success: false, error: "Registro deve ser feito no cliente" };
     }
 
     // Validações básicas
@@ -115,57 +122,35 @@ export const AuthService = {
    * Tenta usar API primeiro, fallback para localStorage
    */
   async login(email: string, password: string): Promise<{ success: boolean; error?: string; user?: User }> {
-    // Tenta usar API primeiro
+    // SEMPRE tenta usar API primeiro (obrigatório para funcionar entre dispositivos)
     if (typeof window !== "undefined") {
       try {
         const { AuthServiceAPI } = await import("./auth-api");
         const result = await AuthServiceAPI.login(email, password);
-        if (result.success) {
+        if (result.success && result.user && result.token) {
+          // Salva token e usuário
+          this.saveToken(result.token, result.user);
           return { success: true, user: result.user };
         }
-        // Se API falhar, continua com localStorage (fallback)
+        // Se API falhar, retorna erro específico
+        return { success: false, error: result.error || "Email ou senha incorretos" };
       } catch (error) {
-        console.warn("API de autenticação não disponível, usando localStorage:", error);
+        console.error("Erro ao fazer login via API:", error);
+        // Verifica se é erro de rede ou servidor
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          return { success: false, error: "Erro ao conectar com o servidor. Verifique sua conexão." };
+        }
+        return { success: false, error: "Erro ao fazer login. Tente novamente." };
       }
     }
 
-    // Fallback para localStorage (compatibilidade)
+    // Apenas no servidor (não deveria acontecer)
     if (typeof window === "undefined") {
-      return { success: false, error: "Apenas no cliente" };
+      return { success: false, error: "Login deve ser feito no cliente" };
     }
 
-    if (!email || !password) {
-      return { success: false, error: "Preencha todos os campos" };
-    }
-
-    // Busca credenciais
-    const credentials = this.getCredentials();
-    const credential = credentials.find(
-      (c) => c.email.toLowerCase() === email.toLowerCase() && c.password === this.hashPassword(password)
-    );
-
-    if (!credential) {
-      return { success: false, error: "Email ou senha incorretos" };
-    }
-
-    // Busca usuário
-    const users = this.getAllUsers();
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-
-    if (!user) {
-      return { success: false, error: "Usuário não encontrado" };
-    }
-
-    // Atualiza último login
-    user.lastLogin = new Date().toISOString();
-    const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    this.syncToCookies("users", updatedUsers);
-
-    // Cria sessão
-    this.createSession(user);
-
-    return { success: true, user };
+    // Não há mais fallback para localStorage - sempre usa API
+    return { success: false, error: "Sistema de autenticação indisponível" };
   },
 
   /**
