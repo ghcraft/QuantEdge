@@ -108,7 +108,7 @@ export const AuthService = {
     this.createSession(newUser);
 
     return { success: true };
-  } as any, // Type assertion para compatibilidade
+  },
 
   /**
    * Faz login do usuário
@@ -166,7 +166,7 @@ export const AuthService = {
     this.createSession(user);
 
     return { success: true, user };
-  } as any, // Type assertion para compatibilidade
+  },
 
   /**
    * Faz logout
@@ -222,7 +222,7 @@ export const AuthService = {
     }
 
     return true;
-  } as any, // Type assertion para compatibilidade
+  },
 
   /**
    * Obtém usuário atual
@@ -246,7 +246,7 @@ export const AuthService = {
       return null;
     }
     return session.user;
-  } as any, // Type assertion para compatibilidade
+  },
 
   /**
    * Cria sessão de autenticação
