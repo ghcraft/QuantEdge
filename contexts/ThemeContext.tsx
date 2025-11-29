@@ -93,7 +93,6 @@ export function useTheme(): ThemeContextType {
   // IMPORTANTE: Mesmo com a verificação acima, o React ainda pode tentar executar
   // o hook durante o prerender, então usamos try-catch como proteção adicional
   try {
-    // @ts-expect-error - Força o uso de useContext mesmo que o TypeScript reclame
     const context = useContext(ThemeContext);
     // Atualiza o singleton com o valor do context
     if (context) {
