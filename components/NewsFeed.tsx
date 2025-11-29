@@ -64,11 +64,22 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
 
       const data: NewsData = await response.json();
 
-      // Filtra por fontes se especificado
-      let filteredNews = data.news;
-      if (filterSources && filterSources.length > 0) {
-        filteredNews = data.news.filter((n) => filterSources.includes(n.source));
+      // Verifica se há notícias válidas
+      if (!data) {
+        console.warn("[NewsFeed] Resposta da API sem dados");
+        setNews([]);
+        setLoading(false);
+        return;
       }
+
+      // Filtra por fontes se especificado
+      let filteredNews = (data.news || []);
+      if (filterSources && filterSources.length > 0 && filteredNews.length > 0) {
+        filteredNews = filteredNews.filter((n) => filterSources.includes(n.source));
+      }
+      
+      // Valida que as notícias têm os campos necessários
+      filteredNews = filteredNews.filter((n) => n && n.title && n.link);
 
       // Ordena por data (mais recentes primeiro)
       filteredNews.sort((a, b) => {
@@ -144,9 +155,9 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
     <div className="w-full">
       {/* Header estilo TradingView */}
       <div className="bg-dark-card border-b border-dark-border">
-        <div className="px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h2 className="text-sm font-semibold text-dark-text-primary">Notícias</h2>
+        <div className="px-3 sm:px-4 py-2 sm:py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+            <h2 className="text-xs sm:text-sm font-semibold text-dark-text-primary">Notícias</h2>
             {lastUpdate && (
               <span className="text-xs text-dark-text-secondary">
                 Atualizado {formatLastUpdate(lastUpdate)}
@@ -189,12 +200,27 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
       {!loading && !error && (
         <div className="bg-dark-card border border-dark-border">
           {news.length === 0 ? (
-            <div className="text-center py-16">
+            <div className="text-center py-12 sm:py-16 px-4">
               <div className="text-4xl mb-4">📰</div>
               <p className="text-dark-text-primary font-medium mb-2">Nenhuma notícia disponível</p>
-              <p className="text-sm text-dark-text-secondary">
+              <p className="text-sm text-dark-text-secondary mb-4">
                 As notícias serão atualizadas automaticamente.
               </p>
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  fetch("/api/cron/update", { method: "POST" })
+                    .then(() => {
+                      setTimeout(() => fetchNews(), 2000);
+                    })
+                    .catch(() => {
+                      setLoading(false);
+                    });
+                }}
+                className="px-4 py-2 bg-dark-accent/20 text-dark-accent border border-dark-accent/50 rounded-xl hover:bg-dark-accent/30 transition-colors text-sm"
+              >
+                Forçar Atualização
+              </button>
             </div>
           ) : (
             <div className="divide-y divide-dark-border/50">

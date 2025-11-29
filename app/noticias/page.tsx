@@ -104,33 +104,33 @@ export default function NoticiasPage() {
         <section className="relative overflow-hidden border-b border-dark-border">
           <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-orange-500/5"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,193,7,0.03),transparent_50%)]"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-12 sm:py-20">
             <div className="text-center">
-              <div className="inline-flex items-center space-x-2 mb-6">
-                <div className="w-1 h-10 bg-gradient-to-b from-amber-400 to-transparent"></div>
-                <h1 className="text-5xl md:text-7xl font-extralight tracking-tight">
+              <div className="inline-flex items-center space-x-2 mb-4 sm:mb-6">
+                <div className="w-1 h-8 sm:h-10 bg-gradient-to-b from-amber-400 to-transparent"></div>
+                <h1 className="text-3xl sm:text-5xl md:text-7xl font-extralight tracking-tight">
                   <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 bg-clip-text text-transparent">
                     Notícias Financeiras
                   </span>
                 </h1>
               </div>
-              <p className="text-xl text-dark-text-muted/80 font-light max-w-3xl mx-auto mb-8">
+              <p className="text-base sm:text-xl text-dark-text-muted/80 font-light max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
                 Mantenha-se informado com as últimas notícias do mercado financeiro brasileiro e internacional
               </p>
               
               {/* Estatísticas Rápidas */}
-              <div className="flex items-center justify-center gap-8 mt-8">
-                <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl px-6 py-4">
-                  <div className="text-3xl font-extralight text-dark-text-primary">{stats.total}</div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-8">
+                <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 w-full sm:w-auto">
+                  <div className="text-2xl sm:text-3xl font-extralight text-dark-text-primary">{stats.total}</div>
                   <div className="text-xs text-dark-text-muted uppercase tracking-wider mt-1">Total</div>
                 </div>
-                <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl px-6 py-4">
-                  <div className="text-3xl font-extralight text-dark-accent">{stats.last24h}</div>
+                <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 w-full sm:w-auto">
+                  <div className="text-2xl sm:text-3xl font-extralight text-dark-accent">{stats.last24h}</div>
                   <div className="text-xs text-dark-text-muted uppercase tracking-wider mt-1">Últimas 24h</div>
                 </div>
-                <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl px-6 py-4">
-                  <div className="text-sm font-light text-dark-text-primary">
-                    {stats.topSources.join(", ")}
+                <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 w-full sm:w-auto">
+                  <div className="text-xs sm:text-sm font-light text-dark-text-primary line-clamp-2">
+                    {stats.topSources.join(", ") || "N/A"}
                   </div>
                   <div className="text-xs text-dark-text-muted uppercase tracking-wider mt-1">Top Fontes</div>
                 </div>
@@ -139,12 +139,12 @@ export default function NoticiasPage() {
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
             {/* Coluna Principal */}
             <div className="lg:col-span-3 space-y-8">
               {/* Barra de Busca e Filtros Avançados */}
-              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-3xl p-6">
+              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-2xl sm:rounded-3xl p-4 sm:p-6">
                 {/* Busca */}
                 <div className="mb-6">
                   <div className="relative">
@@ -153,7 +153,7 @@ export default function NoticiasPage() {
                       placeholder="Buscar notícias..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-dark-bg-secondary/50 border border-dark-border rounded-2xl px-6 py-4 text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-dark-accent/50 focus:ring-2 focus:ring-dark-accent/20 transition-all"
+                      className="w-full bg-dark-bg-secondary/50 border border-dark-border rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-dark-text-primary placeholder-dark-text-muted focus:outline-none focus:border-dark-accent/50 focus:ring-2 focus:ring-dark-accent/20 transition-all"
                     />
                     <svg className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -173,14 +173,15 @@ export default function NoticiasPage() {
                         <button
                           key={category.id}
                           onClick={() => setSelectedCategory(category.id)}
-                          className={`px-4 py-2 rounded-xl text-sm font-light transition-all flex items-center gap-2 ${
+                          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all flex items-center gap-1.5 sm:gap-2 ${
                             selectedCategory === category.id
                               ? "bg-dark-accent/20 text-dark-accent border border-dark-accent/50"
                               : "bg-dark-bg-secondary/50 text-dark-text-muted hover:text-dark-text-primary border border-dark-border hover:border-dark-accent/30"
                           }`}
                         >
-                          <span>{category.icon}</span>
-                          {category.label}
+                          <span className="text-sm sm:text-base">{category.icon}</span>
+                          <span className="hidden sm:inline">{category.label}</span>
+                          <span className="sm:hidden">{category.label.split(' ')[0]}</span>
                         </button>
                       ))}
                     </div>
@@ -196,7 +197,7 @@ export default function NoticiasPage() {
                         <button
                           key={filter.id}
                           onClick={() => setSelectedTimeFilter(filter.id)}
-                          className={`px-4 py-2 rounded-xl text-sm font-light transition-all ${
+                          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all ${
                             selectedTimeFilter === filter.id
                               ? "bg-dark-info/20 text-dark-info border border-dark-info/50"
                               : "bg-dark-bg-secondary/50 text-dark-text-muted hover:text-dark-text-primary border border-dark-border hover:border-dark-info/30"
@@ -216,7 +217,7 @@ export default function NoticiasPage() {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         onClick={() => setSelectedSource(null)}
-                        className={`px-4 py-2 rounded-xl text-sm font-light transition-all ${
+                        className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all ${
                           selectedSource === null
                             ? "bg-dark-success/20 text-dark-success border border-dark-success/50"
                             : "bg-dark-bg-secondary/50 text-dark-text-muted hover:text-dark-text-primary border border-dark-border hover:border-dark-success/30"
@@ -228,7 +229,7 @@ export default function NoticiasPage() {
                         <button
                           key={source}
                           onClick={() => setSelectedSource(source)}
-                          className={`px-4 py-2 rounded-xl text-sm font-light transition-all ${
+                          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all ${
                             selectedSource === source
                               ? "bg-dark-success/20 text-dark-success border border-dark-success/50"
                               : "bg-dark-bg-secondary/50 text-dark-text-muted hover:text-dark-text-primary border border-dark-border hover:border-dark-success/30"
@@ -255,14 +256,14 @@ export default function NoticiasPage() {
                       Mais Recentes
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
                     {featuredNews.map((item, index) => (
                       <a
                         key={item.id}
                         href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-2xl p-6 hover:border-dark-accent/50 hover:bg-dark-card-hover/50 transition-all"
+                        className="group bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-dark-accent/50 hover:bg-dark-card-hover/50 transition-all"
                       >
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-xs font-medium text-dark-accent uppercase tracking-wide">
@@ -303,9 +304,9 @@ export default function NoticiasPage() {
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
               {/* Estatísticas Detalhadas */}
-              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-3xl p-6">
+              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-2xl sm:rounded-3xl p-4 sm:p-6">
                 <h3 className="text-lg font-extralight text-dark-text-primary mb-4">
                   Estatísticas
                 </h3>
@@ -328,7 +329,7 @@ export default function NoticiasPage() {
               </section>
 
               {/* Fontes Mais Ativas */}
-              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-3xl p-6">
+              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-2xl sm:rounded-3xl p-4 sm:p-6">
                 <h3 className="text-lg font-extralight text-dark-text-primary mb-4">
                   Fontes Mais Ativas
                 </h3>
@@ -351,7 +352,7 @@ export default function NoticiasPage() {
               </section>
 
               {/* Timeline de Atualizações */}
-              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-3xl p-6">
+              <section className="bg-dark-card/50 backdrop-blur-sm border border-dark-border rounded-2xl sm:rounded-3xl p-4 sm:p-6">
                 <h3 className="text-lg font-extralight text-dark-text-primary mb-4">
                   Timeline
                 </h3>

@@ -55,9 +55,9 @@ export async function GET(request: Request) {
       30000 // 30 segundos
     );
 
+    // Se não há notícias, retorna estrutura válida mas vazia
     if (!newsData || !newsData.news || newsData.news.length === 0) {
-      // Se não há notícias ainda, força atualização em background e retorna array vazio
-      // Não bloqueia a resposta - atualiza em background
+      // Força atualização em background (não bloqueia)
       import("@/lib/cron-job").then(({ updateNewsNow }) => {
         updateNewsNow().catch(() => {
           // Ignora erros em background
@@ -66,13 +66,41 @@ export async function GET(request: Request) {
         // Ignora erros de import
       });
       
+      // Retorna estrutura válida mesmo sem notícias
       return NextResponse.json({
         lastUpdate: null,
         news: [],
       } as NewsData, {
         status: 200,
         headers: {
-          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+          "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30", // Cache menor quando vazio
+          "X-RateLimit-Limit": "200",
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-RateLimit-Reset": rateLimit.resetAt.toString(),
+        },
+      });
+    }
+    
+    // Valida e filtra notícias inválidas
+    const validNews = newsData.news.filter((n) => 
+      n && 
+      n.title && 
+      n.link && 
+      typeof n.title === 'string' && 
+      typeof n.link === 'string' &&
+      n.title.trim().length > 0 &&
+      n.link.trim().length > 0
+    );
+    
+    // Se após validação não há notícias válidas, retorna vazio
+    if (validNews.length === 0) {
+      return NextResponse.json({
+        lastUpdate: newsData.lastUpdate,
+        news: [],
+      } as NewsData, {
+        status: 200,
+        headers: {
+          "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
           "X-RateLimit-Limit": "200",
           "X-RateLimit-Remaining": rateLimit.remaining.toString(),
           "X-RateLimit-Reset": rateLimit.resetAt.toString(),
@@ -80,8 +108,11 @@ export async function GET(request: Request) {
       });
     }
 
-    // Retorna as notícias com status 200 e headers otimizados
-    return NextResponse.json(newsData, {
+    // Retorna as notícias válidas com status 200 e headers otimizados
+    return NextResponse.json({
+      lastUpdate: newsData.lastUpdate,
+      news: validNews,
+    } as NewsData, {
       status: 200,
       headers: {
         "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",

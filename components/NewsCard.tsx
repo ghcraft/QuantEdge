@@ -142,11 +142,11 @@ export default function NewsCard({ news, isNew = false, variant = "compact" }: N
         href={news.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="block px-4 py-4 relative"
+        className="block px-3 sm:px-4 py-3 sm:py-4 relative"
       >
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
           {/* Timestamp */}
-          <div className="flex-shrink-0 w-20 text-right">
+          <div className="flex-shrink-0 w-full sm:w-20 text-left sm:text-right">
             <div className="text-xs text-dark-text-secondary font-mono mb-1">
               {formatDate(news.pubDate)}
             </div>
@@ -159,19 +159,19 @@ export default function NewsCard({ news, isNew = false, variant = "compact" }: N
           </div>
 
           {/* Conteúdo principal */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 w-full sm:w-auto">
             {/* Fonte e Categoria */}
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
               <span className="text-xs font-medium text-dark-text-muted uppercase tracking-wide">
                 {news.source}
               </span>
-              <div className="h-1 w-1 bg-dark-border rounded-full"></div>
+              <div className="h-1 w-1 bg-dark-border rounded-full hidden sm:block"></div>
               <span className="text-xs font-light text-dark-text-secondary">
                 {category}
               </span>
               {isNew && (
                 <>
-                  <div className="h-1 w-1 bg-dark-border rounded-full"></div>
+                  <div className="h-1 w-1 bg-dark-border rounded-full hidden sm:block"></div>
                   <span className="px-2 py-0.5 bg-dark-accent/20 text-dark-accent text-[10px] rounded-full">
                     NOVO
                   </span>
@@ -180,15 +180,15 @@ export default function NewsCard({ news, isNew = false, variant = "compact" }: N
             </div>
 
             {/* Título */}
-            <h3 className="text-sm font-normal text-dark-text-primary leading-snug 
+            <h3 className="text-sm sm:text-base font-normal text-dark-text-primary leading-snug 
                           group-hover:text-dark-accent transition-colors duration-200
-                          line-clamp-2 mb-2">
+                          line-clamp-2 sm:line-clamp-3 mb-2">
               {news.title}
             </h3>
 
             {/* Descrição compacta */}
             {news.description && (
-              <p className="text-xs text-dark-text-secondary line-clamp-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-dark-text-secondary line-clamp-2 sm:line-clamp-3 leading-relaxed">
                 {news.description}
               </p>
             )}
