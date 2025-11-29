@@ -1,20 +1,34 @@
-import { PrismaClient } from '@prisma/client';
+// Lazy import do Prisma Client para evitar problemas de bundling
+let PrismaClient: any;
+let prismaInstance: any;
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
+function getPrismaClient() {
+  if (!PrismaClient) {
+    PrismaClient = require('@prisma/client').PrismaClient;
+  }
+  return PrismaClient;
 }
 
-const prismaOptions: any = {};
+function getPrisma() {
+  if (prismaInstance) {
+    return prismaInstance;
+  }
 
-if (process.env.NODE_ENV === 'development') {
-  prismaOptions.log = ['error', 'warn'];
+  const Prisma = getPrismaClient();
+  const prismaOptions: any = {};
+
+  if (process.env.NODE_ENV === 'development') {
+    prismaOptions.log = ['error', 'warn'];
+  }
+
+  prismaInstance = new Prisma(prismaOptions);
+
+  if (process.env.NODE_ENV !== 'production') {
+    (globalThis as any).prisma = prismaInstance;
+  }
+
+  return prismaInstance;
 }
 
-export const prisma =
-  globalThis.prisma ?? new PrismaClient(prismaOptions);
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
-}
+export const prisma = getPrisma();
 
