@@ -409,18 +409,18 @@ export default function FinancialChart({
       const isTooltipPositive = change >= 0;
       
       return (
-        <div className="bg-dark-card/95 backdrop-blur-xl border border-dark-border rounded-xl p-4 shadow-2xl">
-          <p className="text-xs text-dark-text-muted font-light mb-2">{data.time}</p>
+        <div className="bg-dark-card/95 light:bg-light-card/95 backdrop-blur-xl border border-dark-border light:border-light-border rounded-xl p-4 shadow-2xl">
+          <p className="text-xs text-dark-text-muted light:text-light-text-muted font-light mb-2">{data.time}</p>
           <div className="flex items-baseline space-x-2 mb-2">
-            <p className={`text-lg font-light ${isTooltipPositive ? "text-dark-success" : "text-dark-danger"}`}>
+            <p className={`text-lg font-light ${isTooltipPositive ? "text-dark-success light:text-light-success" : "text-dark-danger light:text-light-danger"}`}>
               {formatPrice(price)}
             </p>
-            <span className={`text-xs px-2 py-0.5 rounded ${isTooltipPositive ? "text-dark-success bg-dark-success/10" : "text-dark-danger bg-dark-danger/10"}`}>
+            <span className={`text-xs px-2 py-0.5 rounded ${isTooltipPositive ? "text-dark-success bg-dark-success/10 light:text-light-success light:bg-light-success/10" : "text-dark-danger bg-dark-danger/10 light:text-light-danger light:bg-light-danger/10"}`}>
               {isTooltipPositive ? "+" : ""}{changePercent.toFixed(2)}%
             </span>
           </div>
           {data.volume && (
-            <p className="text-xs text-dark-text-muted font-light">
+            <p className="text-xs text-dark-text-muted light:text-light-text-muted font-light">
               Volume: {data.volume >= 1000000 ? `$${(data.volume / 1000000).toFixed(2)}M` : `$${(data.volume / 1000).toFixed(2)}K`}
             </p>
           )}
@@ -442,12 +442,12 @@ export default function FinancialChart({
   if (priceData.length === 0) {
     return (
       <div
-        style={{ width, height: typeof height === 'number' ? height : 350 }}
-        className="rounded-lg bg-dark-card/50 flex items-center justify-center border border-dark-border/50"
+        style={{ width, height: typeof height === 'number' ? height : 350, minWidth: "300px", minHeight: "200px" }}
+        className="rounded-lg bg-dark-card/50 light:bg-light-card/50 flex items-center justify-center border border-dark-border/50 light:border-light-border/50"
       >
         <div className="text-center">
-          <div className="w-12 h-12 border-3 border-dark-accent/30 border-t-dark-accent rounded-full animate-spin mx-auto mb-3"></div>
-          <div className="text-dark-text-muted text-sm">Carregando gráfico...</div>
+          <div className="w-12 h-12 border-3 border-dark-accent/30 light:border-light-accent/30 border-t-dark-accent light:border-t-light-accent rounded-full animate-spin mx-auto mb-3"></div>
+          <div className="text-dark-text-muted light:text-light-text-muted text-sm">Carregando gráfico...</div>
         </div>
       </div>
     );
@@ -455,31 +455,31 @@ export default function FinancialChart({
 
   return (
     <div
-      style={{ width, height: typeof height === 'number' ? height : 350 }}
-      className="rounded-lg bg-dark-card/40 backdrop-blur-xl border border-dark-border/50 p-6 relative overflow-hidden"
+      style={{ width, height: typeof height === 'number' ? height : 350, minWidth: "300px", minHeight: "200px" }}
+      className="rounded-lg bg-dark-card/40 light:bg-light-card/40 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 p-6 relative overflow-hidden"
     >
       {/* Header com preço atual - Adaptável para gráficos compactos */}
       {typeof height === 'number' && height >= 150 ? (
         <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
           <div>
-            <h3 className="text-xl font-light text-dark-text-primary mb-1">{symbol.split(":")[1] || symbol}</h3>
-            <p className="text-xs text-dark-text-muted font-mono">{symbol}</p>
+            <h3 className="text-xl font-light text-dark-text-primary light:text-light-text-primary mb-1">{symbol.split(":")[1] || symbol}</h3>
+            <p className="text-xs text-dark-text-muted light:text-light-text-muted font-mono">{symbol}</p>
           </div>
           <div className="text-right">
             <div className="flex items-baseline space-x-2">
-              <p className="text-3xl font-extralight text-dark-text-primary transition-all duration-300">
+              <p className="text-3xl font-extralight text-dark-text-primary light:text-light-text-primary transition-all duration-300">
                 {formatPrice(currentPrice)}
               </p>
               <span className={`text-sm font-light px-2 py-1 rounded-lg transition-colors duration-300 ${
-                isPositive ? "text-dark-success bg-dark-success/10" : "text-dark-danger bg-dark-danger/10"
+                isPositive ? "text-dark-success bg-dark-success/10 light:text-light-success light:bg-light-success/10" : "text-dark-danger bg-dark-danger/10 light:text-light-danger light:bg-light-danger/10"
               }`}>
                 {isPositive ? "↗" : "↘"}
               </span>
             </div>
-            <p className={`text-base font-light mt-1 transition-colors duration-300 ${isPositive ? "text-dark-success" : "text-dark-danger"}`}>
+            <p className={`text-base font-light mt-1 transition-colors duration-300 ${isPositive ? "text-dark-success light:text-light-success" : "text-dark-danger light:text-light-danger"}`}>
               {isPositive ? "+" : ""}{formatPrice(priceChange)} ({isPositive ? "+" : ""}{priceChangePercent.toFixed(2)}%)
             </p>
-            <p className="text-xs text-dark-text-muted font-light mt-1">Última atualização: {new Date().toLocaleTimeString("pt-BR")}</p>
+            <p className="text-xs text-dark-text-muted light:text-light-text-muted font-light mt-1">Última atualização: {new Date().toLocaleTimeString("pt-BR")}</p>
           </div>
         </div>
       ) : (
@@ -493,6 +493,7 @@ export default function FinancialChart({
         style={{ 
           height: `${Math.max(chartHeight, 200)}px`, 
           minHeight: "200px", 
+          minWidth: "300px",
           width: "100%",
           position: "relative",
           display: "block"
@@ -505,6 +506,7 @@ export default function FinancialChart({
             minHeight={200} 
             minWidth={300}
             debounce={1}
+            aspect={undefined}
           >
             <AreaChart 
             data={priceData} 
@@ -582,9 +584,9 @@ export default function FinancialChart({
         
         {/* Indicadores Visuais */}
         <div className="absolute top-2 right-2 flex items-center space-x-2">
-          <div className="flex items-center space-x-1 px-2 py-1 bg-dark-card/80 backdrop-blur-sm rounded-lg border border-dark-border/30">
-            <div className={`w-2 h-2 rounded-full ${isPositive ? "bg-dark-success" : "bg-dark-danger"}`}></div>
-            <span className="text-xs text-dark-text-muted font-light">
+          <div className="flex items-center space-x-1 px-2 py-1 bg-dark-card/80 light:bg-light-card/80 backdrop-blur-sm rounded-lg border border-dark-border/30 light:border-light-border/30">
+            <div className={`w-2 h-2 rounded-full ${isPositive ? "bg-dark-success light:bg-light-success" : "bg-dark-danger light:bg-light-danger"}`}></div>
+            <span className="text-xs text-dark-text-muted light:text-light-text-muted font-light">
               {isPositive ? "Alta" : "Baixa"}
             </span>
           </div>
@@ -593,25 +595,25 @@ export default function FinancialChart({
       
       {/* Legenda e Estatísticas - Apenas para gráficos maiores */}
       {priceData.length > 0 && typeof height === 'number' && height >= 150 && (
-        <div className="mt-4 pt-4 border-t border-dark-border/30">
+        <div className="mt-4 pt-4 border-t border-dark-border/30 light:border-light-border/30">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
             <div>
-              <p className="text-dark-text-muted font-light mb-1">Preço Inicial</p>
-              <p className="text-dark-text-primary font-light">{formatPrice(priceData[0].price)}</p>
+              <p className="text-dark-text-muted light:text-light-text-muted font-light mb-1">Preço Inicial</p>
+              <p className="text-dark-text-primary light:text-light-text-primary font-light">{formatPrice(priceData[0].price)}</p>
             </div>
             <div>
-              <p className="text-dark-text-muted font-light mb-1">Preço Atual</p>
-              <p className="text-dark-text-primary font-light">{formatPrice(currentPrice)}</p>
+              <p className="text-dark-text-muted light:text-light-text-muted font-light mb-1">Preço Atual</p>
+              <p className="text-dark-text-primary light:text-light-text-primary font-light">{formatPrice(currentPrice)}</p>
             </div>
             <div>
-              <p className="text-dark-text-muted font-light mb-1">Variação</p>
-              <p className={`font-light ${isPositive ? "text-dark-success" : "text-dark-danger"}`}>
+              <p className="text-dark-text-muted light:text-light-text-muted font-light mb-1">Variação</p>
+              <p className={`font-light ${isPositive ? "text-dark-success light:text-light-success" : "text-dark-danger light:text-light-danger"}`}>
                 {isPositive ? "+" : ""}{priceChangePercent.toFixed(2)}%
               </p>
             </div>
             <div>
-              <p className="text-dark-text-muted font-light mb-1">Pontos no Gráfico</p>
-              <p className="text-dark-text-primary font-light">{priceData.length}</p>
+              <p className="text-dark-text-muted light:text-light-text-muted font-light mb-1">Pontos no Gráfico</p>
+              <p className="text-dark-text-primary light:text-light-text-primary font-light">{priceData.length}</p>
             </div>
           </div>
         </div>

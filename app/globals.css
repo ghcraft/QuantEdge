@@ -21,10 +21,10 @@
     --bg: #ffffff;
     --bg-secondary: #f8f9fa;
     --card: #ffffff;
-    --border: #e5e5e5;
-    --text: #000000;
-    --text-muted: #666666;
-    --accent: #0066cc;
+    --border: #dadce0;
+    --text: #202124;
+    --text-muted: #5f6368;
+    --accent: #1a73e8;
   }
   
   body {

@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: 'class', // Usa classe para dark mode
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -41,28 +42,28 @@ const config: Config = {
           "neon-blue": "#00aaff",
           "neon-purple": "#aa00ff",
         },
-        // Light theme
+        // Light theme - Estilo Google profissional
         light: {
           bg: "#ffffff",
           "bg-secondary": "#f8f9fa",
           card: "#ffffff",
-          "card-hover": "#f5f5f5",
-          border: "#e5e5e5",
-          "border-light": "#d0d0d0",
-          text: "#000000",
-          "text-primary": "#1a1a1a",
-          "text-muted": "#666666",
-          "text-secondary": "#888888",
-          accent: "#0066cc",
-          "accent-hover": "#0052a3",
-          success: "#00aa44",
-          "success-light": "#00cc55",
-          danger: "#cc0000",
-          "danger-light": "#ff3333",
-          warning: "#ff8800",
-          "warning-light": "#ffaa00",
-          info: "#0066cc",
-          "info-light": "#0088ff",
+          "card-hover": "#f1f3f4",
+          border: "#dadce0",
+          "border-light": "#e8eaed",
+          text: "#202124",
+          "text-primary": "#202124",
+          "text-muted": "#5f6368",
+          "text-secondary": "#80868b",
+          accent: "#1a73e8",
+          "accent-hover": "#1557b0",
+          success: "#34a853",
+          "success-light": "#4caf50",
+          danger: "#ea4335",
+          "danger-light": "#f44336",
+          warning: "#fbbc04",
+          "warning-light": "#ff9800",
+          info: "#1a73e8",
+          "info-light": "#4285f4",
         },
       },
       animation: {
@@ -89,7 +90,9 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('./tailwind-plugin-light-mode'),
+  ],
 };
 export default config;
 
