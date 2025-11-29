@@ -10,6 +10,15 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 
 export async function POST(request: NextRequest) {
   try {
+    // Verifica se Prisma está disponível
+    if (!prisma) {
+      console.error('Prisma Client não está disponível');
+      return NextResponse.json(
+        { success: false, error: 'Erro de configuração do servidor' },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const { email, password, name } = body;
 

@@ -1,28 +1,46 @@
 // Lazy import do Prisma Client para evitar problemas de bundling
 // Usa uma função getter para carregar apenas quando necessário
 let prismaInstance: any = null;
+let prismaError: Error | null = null;
 
 function getPrisma() {
+  // Se já tentou carregar e deu erro, retorna null
+  if (prismaError) {
+    throw prismaError;
+  }
+
   if (prismaInstance) {
     return prismaInstance;
   }
 
-  // Carrega Prisma Client apenas quando necessário (runtime)
-  const { PrismaClient } = require('@prisma/client');
-  
-  const prismaOptions: any = {};
+  try {
+    // Carrega Prisma Client apenas quando necessário (runtime)
+    const { PrismaClient } = require('@prisma/client');
+    
+    const prismaOptions: any = {};
 
-  if (process.env.NODE_ENV === 'development') {
-    prismaOptions.log = ['error', 'warn'];
+    if (process.env.NODE_ENV === 'development') {
+      prismaOptions.log = ['error', 'warn'];
+    }
+
+    prismaInstance = new PrismaClient(prismaOptions);
+
+    // Testa conexão
+    prismaInstance.$connect().catch((err: Error) => {
+      console.error('Erro ao conectar Prisma:', err);
+      prismaError = err;
+    });
+
+    if (process.env.NODE_ENV !== 'production') {
+      (globalThis as any).prisma = prismaInstance;
+    }
+
+    return prismaInstance;
+  } catch (error: any) {
+    console.error('Erro ao inicializar Prisma Client:', error);
+    prismaError = error as Error;
+    throw error;
   }
-
-  prismaInstance = new PrismaClient(prismaOptions);
-
-  if (process.env.NODE_ENV !== 'production') {
-    (globalThis as any).prisma = prismaInstance;
-  }
-
-  return prismaInstance;
 }
 
 // Exporta um proxy que carrega o Prisma Client apenas quando acessado
