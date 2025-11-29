@@ -5,13 +5,14 @@ import { NewsItem } from "@/types/news";
 const parser = new Parser();
 
 /**
- * URLs dos feeds RSS gratuitos de notícias financeiras em PORTUGUÊS
- * Feeds de fontes brasileiras e internacionais em português
+ * URLs dos feeds RSS gratuitos de notícias financeiras
+ * Principais fontes do mercado financeiro brasileiro e internacional
  * 
  * Nota: Alguns feeds podem estar temporariamente indisponíveis
  * O sistema tentará todos e usará os que funcionarem
  */
 const RSS_FEEDS = [
+  // ========== FONTES BRASILEIRAS - MERCADO FINANCEIRO ==========
   {
     name: "InfoMoney",
     url: "https://www.infomoney.com.br/feed/",
@@ -32,6 +33,61 @@ const RSS_FEEDS = [
     name: "Folha de S.Paulo - Mercado",
     url: "https://feeds.folha.uol.com.br/mercado/rss091.xml",
   },
+  {
+    name: "Estadão - Economia",
+    url: "https://www.estadao.com.br/economia/rss.xml",
+  },
+  {
+    name: "O Globo - Economia",
+    url: "https://oglobo.globo.com/rss/economia/",
+  },
+  {
+    name: "IstoÉ Dinheiro",
+    url: "https://www.istoedinheiro.com.br/feed/",
+  },
+  {
+    name: "Agência Estado",
+    url: "https://www.ae.com.br/rss/economia",
+  },
+  {
+    name: "Seu Dinheiro",
+    url: "https://www.seudinheiro.com/feed/",
+  },
+  {
+    name: "Suno Notícias",
+    url: "https://www.suno.com.br/feed/",
+  },
+  {
+    name: "Brasil 247 - Economia",
+    url: "https://www.brasil247.com/rss/economia",
+  },
+  
+  // ========== FONTES INTERNACIONAIS - MERCADO FINANCEIRO ==========
+  {
+    name: "Yahoo Finance",
+    url: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=^BVSP,^GSPC,^IXIC&region=US&lang=pt-BR",
+  },
+  {
+    name: "MarketWatch",
+    url: "https://www.marketwatch.com/rss/topstories",
+  },
+  {
+    name: "Financial Times",
+    url: "https://www.ft.com/?format=rss",
+  },
+  {
+    name: "Bloomberg",
+    url: "https://www.bloomberg.com/feed/topics/economics",
+  },
+  {
+    name: "CNBC",
+    url: "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+  },
+  {
+    name: "Investing.com Global",
+    url: "https://www.investing.com/rss/news.rss",
+  },
+  
   // Feeds removidos temporariamente devido a erros:
   // - UOL Economia: Feed não reconhecido como RSS 1 ou 2
   // - CNN Brasil: Caracteres inválidos no XML
@@ -83,20 +139,27 @@ async function fetchFeedNews(
 
 /**
  * Busca notícias de todos os feeds RSS configurados
- * Retorna entre 3 e 6 notícias aleatórias de todas as fontes
- * @returns Array de notícias (3-6 itens)
+ * Retorna entre 10 e 20 notícias das principais fontes do mercado financeiro
+ * 
+ * Fontes incluídas:
+ * - Brasileiras: InfoMoney, Valor, Exame, Investing.com, Folha, Estadão, Globo, IstoÉ, etc.
+ * - Internacionais: Yahoo Finance, MarketWatch, Financial Times, Bloomberg, CNBC, etc.
+ * 
+ * @returns Array de notícias (10-20 itens)
  */
 export async function fetchAllNews(): Promise<NewsItem[]> {
   try {
     // Busca notícias de todos os feeds em paralelo
+    // Usa Promise.allSettled para não falhar se alguns feeds derem erro
     const allPromises = RSS_FEEDS.map((feed) =>
-      fetchFeedNews(feed.url, feed.name)
+      fetchFeedNews(feed.url, feed.name).catch(() => []) // Retorna array vazio em caso de erro
     );
 
-    // Aguarda todas as requisições
+    // Aguarda todas as requisições (mesmo que algumas falhem)
     const allResults = await Promise.all(allPromises);
 
     // Flatten: junta todos os arrays em um só
+    // (os erros já foram tratados em fetchFeedNews, retornando array vazio)
     const allNews = allResults.flat();
 
     // Remove duplicatas baseado no título (case-insensitive)
@@ -116,10 +179,10 @@ export async function fetchAllNews(): Promise<NewsItem[]> {
       return [];
     }
 
-    // Embaralha e pega entre 5 e 10 notícias (mais fontes disponíveis)
+    // Embaralha e pega entre 10 e 20 notícias (mais fontes disponíveis agora)
     const shuffled = uniqueNews.sort(() => Math.random() - 0.5);
     const count = Math.min(
-      Math.max(5, Math.floor(Math.random() * 6) + 5), // Entre 5 e 10
+      Math.max(10, Math.floor(Math.random() * 11) + 10), // Entre 10 e 20
       shuffled.length
     );
     
