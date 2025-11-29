@@ -6,6 +6,7 @@ import { useState } from "react";
 import CompactSearchBar from "./CompactSearchBar";
 import AuthMenu from "./AuthMenu";
 import Logo from "./Logo";
+import ThemeToggle from "./ThemeToggle";
 
 /**
  * Componente de Navegação Principal
@@ -63,8 +64,9 @@ export default function Navigation() {
               );
             })}
 
-            {/* Auth Menu - Avatar */}
-            <div className="ml-3 pl-3 border-l border-dark-border">
+            {/* Theme Toggle e Auth Menu */}
+            <div className="ml-3 pl-3 border-l border-dark-border flex items-center gap-3">
+              <ThemeToggle />
               <AuthMenu />
             </div>
           </div>
@@ -109,9 +111,10 @@ export default function Navigation() {
                   );
                 })}
                 
-                {/* Mobile Auth */}
+                {/* Mobile Theme Toggle e Auth */}
                 <div className="pt-4 border-t border-dark-border mt-4">
-                  <div className="px-4">
+                  <div className="px-4 flex items-center justify-between">
+                    <ThemeToggle />
                     <AuthMenu />
                   </div>
                 </div>

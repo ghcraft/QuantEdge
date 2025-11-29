@@ -24,22 +24,55 @@ let themeSingleton: ThemeContextType = defaultThemeValue;
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
-  const theme: Theme = "dark";
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
     // Só executa no cliente real
     if (typeof window === "undefined" || typeof document === "undefined") return;
     
     setMounted(true);
-    document.documentElement.classList.remove("light");
-    document.documentElement.classList.add("dark");
+    
+    // Carrega tema salvo do localStorage ou usa preferência do sistema
+    const savedTheme = localStorage.getItem("theme") as Theme | null;
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+    
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
     
     // Atualiza o singleton quando montado no cliente
-    themeSingleton = { theme, toggleTheme: () => {} };
+    themeSingleton = { theme: initialTheme, toggleTheme: () => {} };
+    
+    // Escuta mudanças na preferência do sistema
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem("theme")) {
+        const newTheme = e.matches ? "dark" : "light";
+        setTheme(newTheme);
+        applyTheme(newTheme);
+        themeSingleton = { theme: newTheme, toggleTheme: () => {} };
+      }
+    };
+    mediaQuery.addEventListener("change", handleChange);
+    
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
+  const applyTheme = (newTheme: Theme) => {
+    if (typeof document === "undefined") return;
+    document.documentElement.classList.remove("dark", "light");
+    document.documentElement.classList.add(newTheme);
+  };
+
   const toggleTheme = () => {
-    // Função vazia - tema sempre dark
+    if (typeof window === "undefined") return;
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    // Atualiza o singleton com a função correta
+    const updatedContextValue = { theme: newTheme, toggleTheme };
+    themeSingleton = updatedContextValue;
   };
 
   const contextValue = { theme, toggleTheme };

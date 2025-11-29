@@ -104,11 +104,8 @@ export default function CadastroPage() {
           <div className="text-center mb-10">
             {/* Logo/Brand */}
             <div className="mb-6">
-              <div className="inline-flex items-center space-x-2 mb-4">
+              <div className="flex justify-center mb-4">
                 <Logo size="lg" showText={true} />
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-dark-accent/20 to-dark-info/20 text-dark-accent rounded border border-dark-accent/30">
-                  PRO
-                </span>
               </div>
             </div>
             
@@ -273,13 +270,18 @@ export default function CadastroPage() {
           </form>
 
           {/* Links */}
-          <div className="mt-8 pt-6 border-t border-dark-border">
+          <div className="mt-8 pt-6 border-t border-dark-border space-y-3">
             <p className="text-center text-sm text-dark-text-muted font-light">
               Já tem uma conta?{" "}
               <Link href="/login" className="text-dark-accent hover:text-dark-info transition-colors font-semibold underline">
                 Fazer login
               </Link>
             </p>
+            <div className="p-3 bg-dark-info/10 border border-dark-info/30 rounded-xl">
+              <p className="text-xs text-dark-text-muted font-light text-center">
+                💡 <strong>Nota:</strong> Sua conta será criada localmente no navegador. Para acessar em outro dispositivo, você precisará criar uma nova conta ou fazer login.
+              </p>
+            </div>
           </div>
         </div>
       </div>

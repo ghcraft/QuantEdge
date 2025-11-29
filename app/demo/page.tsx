@@ -119,7 +119,7 @@ export default function DemoPage() {
             <Logo size="md" showText={true} />
 
             {/* Botões de Login/Cadastro com Badge de Confiança */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <div className="hidden md:flex items-center space-x-2 px-3 py-1.5 bg-dark-card/30 border border-dark-border/30 rounded-lg">
                 <svg className="w-3.5 h-3.5 text-dark-success" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -128,13 +128,13 @@ export default function DemoPage() {
               </div>
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-light text-dark-text-muted hover:text-dark-text-primary hover:bg-dark-card rounded-lg transition-all duration-300"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-light text-dark-text-muted hover:text-dark-text-primary hover:bg-dark-card rounded-lg transition-all duration-300 whitespace-nowrap"
               >
                 Entrar
               </Link>
               <Link
                 href="/cadastro"
-                className="px-4 py-2 text-sm font-light bg-dark-accent/20 hover:bg-dark-accent/30 text-dark-accent border border-dark-accent/50 rounded-lg transition-all duration-300"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-light bg-dark-accent/20 hover:bg-dark-accent/30 text-dark-accent border border-dark-accent/50 rounded-lg transition-all duration-300 whitespace-nowrap"
               >
                 Cadastrar
               </Link>
