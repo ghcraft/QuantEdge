@@ -100,6 +100,15 @@ const nextConfig = {
       ...(config.resolve.modules || ["node_modules"]),
     ];
     
+    // Externaliza Prisma Client no servidor para evitar problemas de bundling
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({
+        '@prisma/client': 'commonjs @prisma/client',
+        '.prisma/client': 'commonjs .prisma/client',
+      });
+    }
+    
     // Ignora warnings de módulos opcionais
     config.ignoreWarnings = [
       { module: /node_modules/ },
