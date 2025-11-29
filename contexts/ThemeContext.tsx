@@ -82,6 +82,7 @@ export function useTheme(): ThemeContextType {
   // IMPORTANTE: Esta é uma violação das regras dos hooks do React,
   // mas é NECESSÁRIA para evitar o erro durante o build do Next.js
   // O React ainda vai tentar executar o hook, mas vamos interceptar antes
+  // Verificação para evitar uso de hooks durante build/prerender
   if (isSSR || isBuild) {
     // Retorna o singleton SEM chamar useContext
     // Isso viola as regras dos hooks, mas é a única forma de evitar o erro
