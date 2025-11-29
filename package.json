@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:server": "node server.js",
-    "build": "prisma generate && node scripts/fix-prisma-client.js && next build",
+    "build": "prisma generate && prisma migrate deploy && node scripts/fix-prisma-client.js && next build",
     "build:production": "prisma generate && prisma migrate deploy && next build",
     "build:local": "prisma generate && next build",
     "start": "next start",
