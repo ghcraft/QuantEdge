@@ -10,15 +10,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 
 export async function POST(request: NextRequest) {
   try {
-    // Verifica se Prisma está disponível
-    if (!prisma) {
-      console.error('Prisma Client não está disponível');
-      return NextResponse.json(
-        { success: false, error: 'Erro de configuração do servidor' },
-        { status: 500 }
-      );
-    }
-
     const body = await request.json();
     const { email, password, name } = body;
 
@@ -63,10 +54,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verifica se usuário já existe
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
+    // Verifica se usuário já existe (com tratamento de erro)
+    let existingUser;
+    try {
+      existingUser = await prisma.user.findUnique({
+        where: { email: email.toLowerCase().trim() },
+      });
+    } catch (dbError: any) {
+      console.error('Erro ao verificar usuário existente:', dbError);
+      // Se for erro de conexão, retorna erro específico
+      if (dbError?.code === 'P1001' || dbError?.message?.includes('connect')) {
+        return NextResponse.json(
+          { success: false, error: 'Erro ao conectar com o banco de dados. Verifique a configuração.' },
+          { status: 500 }
+        );
+      }
+      throw dbError; // Re-lança outros erros
+    }
 
     if (existingUser) {
       return NextResponse.json(
@@ -78,14 +82,34 @@ export async function POST(request: NextRequest) {
     // Hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Cria usuário
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase().trim(),
-        name: name.trim(),
-        password: hashedPassword,
-      },
-    });
+    // Cria usuário (com tratamento de erro)
+    let user;
+    try {
+      user = await prisma.user.create({
+        data: {
+          email: email.toLowerCase().trim(),
+          name: name.trim(),
+          password: hashedPassword,
+        },
+      });
+    } catch (dbError: any) {
+      console.error('Erro ao criar usuário:', dbError);
+      // Se for erro de conexão, retorna erro específico
+      if (dbError?.code === 'P1001' || dbError?.message?.includes('connect')) {
+        return NextResponse.json(
+          { success: false, error: 'Erro ao conectar com o banco de dados. Verifique a configuração.' },
+          { status: 500 }
+        );
+      }
+      // Se for erro de duplicação (mesmo que já tenha verificado)
+      if (dbError?.code === 'P2002') {
+        return NextResponse.json(
+          { success: false, error: 'Email já cadastrado.' },
+          { status: 400 }
+        );
+      }
+      throw dbError; // Re-lança outros erros
+    }
 
     // Gera token JWT
     const token = jwt.sign(
