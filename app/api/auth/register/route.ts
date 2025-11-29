@@ -85,17 +85,33 @@ export async function POST(request: NextRequest) {
       { expiresIn: '30d' }
     );
 
-    // Cria sessão
+    // Cria sessão (com tratamento de erro caso já exista)
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30); // 30 dias
 
-    await prisma.session.create({
-      data: {
-        userId: user.id,
-        token,
-        expiresAt,
-      },
-    });
+    try {
+      // Remove sessões antigas do mesmo usuário antes de criar nova
+      await prisma.session.deleteMany({
+        where: {
+          userId: user.id,
+          expiresAt: {
+            lt: new Date(), // Remove sessões expiradas
+          },
+        },
+      });
+
+      await prisma.session.create({
+        data: {
+          userId: user.id,
+          token,
+          expiresAt,
+        },
+      });
+    } catch (sessionError: any) {
+      // Se falhar ao criar sessão, ainda retorna sucesso (sessão pode ser opcional)
+      console.warn('Erro ao criar sessão (não crítico):', sessionError);
+      // Continua e retorna o token mesmo sem salvar sessão
+    }
 
     // Retorna resposta sem a senha
     const { password: _, ...userWithoutPassword } = user;
@@ -105,10 +121,35 @@ export async function POST(request: NextRequest) {
       user: userWithoutPassword,
       token,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao registrar usuário:', error);
+    
+    // Retorna mensagem de erro mais específica
+    let errorMessage = 'Erro ao criar conta. Tente novamente.';
+    
+    // Verifica se é erro de conexão com banco de dados
+    if (error?.code === 'P1001' || error?.message?.includes('connect')) {
+      errorMessage = 'Erro ao conectar com o banco de dados. Verifique a configuração.';
+    } else if (error?.code === 'P2002') {
+      // Erro de duplicação (email já existe)
+      if (error?.meta?.target?.includes('email')) {
+        errorMessage = 'Email já cadastrado.';
+      } else {
+        errorMessage = 'Erro de duplicação no banco de dados.';
+      }
+    } else if (error?.message) {
+      // Em desenvolvimento, retorna mensagem de erro mais detalhada
+      if (process.env.NODE_ENV === 'development') {
+        errorMessage = `Erro: ${error.message}`;
+      }
+    }
+    
     return NextResponse.json(
-      { success: false, error: 'Erro ao criar conta. Tente novamente.' },
+      { 
+        success: false, 
+        error: errorMessage,
+        ...(process.env.NODE_ENV === 'development' && { details: error?.message })
+      },
       { status: 500 }
     );
   }
