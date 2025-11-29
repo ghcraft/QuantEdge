@@ -10,21 +10,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 
 export async function POST(request: NextRequest) {
   try {
-    // Testa conexão com Prisma antes de processar
-    try {
-      await prisma.$connect();
-    } catch (connectError: any) {
-      console.error('Erro ao conectar Prisma:', connectError);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Erro ao conectar com o banco de dados. Verifique a configuração DATABASE_URL.',
-          details: process.env.NODE_ENV === 'development' ? connectError?.message : undefined
-        },
-        { status: 500 }
-      );
-    }
-
     const body = await request.json();
     const { email, password, name } = body;
 
