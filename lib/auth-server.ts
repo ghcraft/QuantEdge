@@ -3,7 +3,7 @@
  * Usa banco de dados e JWT para autenticação segura
  */
 
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword, validatePasswordStrength } from "@/lib/security/password";
 import { generateToken, verifyToken } from "@/lib/security/jwt";
 import { logger } from "@/lib/logger";
