@@ -37,7 +37,9 @@ const jsContent = `// Export from @prisma/client
 // Node.js and Webpack handle circular dependencies by returning partially initialized modules
 
 // Direct re-export - Node.js/Webpack will handle the circular dependency
-module.exports = require('@prisma/client');
+const prismaClient = require('@prisma/client');
+module.exports = prismaClient;
+module.exports.PrismaClient = prismaClient.PrismaClient || prismaClient.default?.PrismaClient || prismaClient;
 `;
 
 // Cria default.d.ts (TypeScript types)
