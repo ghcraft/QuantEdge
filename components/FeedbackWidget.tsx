@@ -17,10 +17,13 @@ export default function FeedbackWidget({ minimal = false }: FeedbackWidgetProps)
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    const user = AuthService.getCurrentUser();
-    if (user) {
-      setUserName(user.name || "Usuário");
-    }
+    const loadUser = async () => {
+      const user = await AuthService.getCurrentUser();
+      if (user) {
+        setUserName(user.name || "Usuário");
+      }
+    };
+    loadUser();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
