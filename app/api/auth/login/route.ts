@@ -10,6 +10,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 
 export async function POST(request: NextRequest) {
   try {
+    // Testa conexão com Prisma antes de processar
+    try {
+      await prisma.$connect();
+    } catch (connectError: any) {
+      console.error('Erro ao conectar Prisma:', connectError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Erro ao conectar com o banco de dados. Verifique a configuração DATABASE_URL.',
+          details: process.env.NODE_ENV === 'development' ? connectError?.message : undefined
+        },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const { email, password } = body;
 
@@ -20,10 +35,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Busca usuário
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
+    // Busca usuário (com tratamento de erro)
+    let user;
+    try {
+      user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase().trim() },
+      });
+    } catch (dbError: any) {
+      console.error('Erro ao buscar usuário:', dbError);
+      if (dbError?.code === 'P1001' || dbError?.message?.includes('connect')) {
+        return NextResponse.json(
+          { success: false, error: 'Erro ao conectar com o banco de dados. Verifique a configuração.' },
+          { status: 500 }
+        );
+      }
+      throw dbError;
+    }
 
     if (!user) {
       return NextResponse.json(
