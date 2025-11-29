@@ -37,7 +37,15 @@ export const AuthService = {
         if (result.success) {
           // Auto-login após registro bem-sucedido
           if (result.token && result.user) {
-            this.saveToken(result.token, result.user);
+            // Cria sessão com token e usuário
+            const session: AuthSession = {
+              user: result.user,
+              token: result.token,
+              expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 dias
+            };
+            localStorage.setItem("authSession", JSON.stringify(session));
+            this.syncToCookies("authSession", session);
+            window.dispatchEvent(new CustomEvent("authChange"));
           }
           return { success: true };
         }

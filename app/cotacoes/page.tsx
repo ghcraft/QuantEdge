@@ -126,6 +126,7 @@ function CotacoesContent() {
   const [chartInterval, setChartInterval] = useState<"1" | "5" | "15" | "60" | "240" | "1D">("15");
   const [isLoading, setIsLoading] = useState(true);
   const scrollBlockedRef = useRef(false);
+  const userScrolledRef = useRef(false); // Flag para detectar scroll manual do usuário
 
   // Carrega dados reais na inicialização via API route (server-side)
   useEffect(() => {
@@ -206,23 +207,48 @@ function CotacoesContent() {
     loadInitialData();
   }, []);
 
-  // Inicializa com símbolo da URL se existir (com scroll automático)
+  // Detecta scroll manual do usuário
+  useEffect(() => {
+    let scrollTimer: NodeJS.Timeout;
+    
+    const handleScroll = () => {
+      // Se o usuário fez scroll manual, marca como true
+      userScrolledRef.current = true;
+      
+      // Reseta após 2 segundos de inatividade
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        userScrolledRef.current = false;
+      }, 2000);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimer);
+    };
+  }, []);
+
+  // Inicializa com símbolo da URL se existir (com scroll automático apenas na primeira vez)
   useEffect(() => {
     if (isLoading) return;
     
     const symbol = searchParams.get("symbol");
-    if (symbol) {
+    if (symbol && !userScrolledRef.current) {
       const quote = quotes.find((q) => q.symbol === symbol);
       if (quote) {
         scrollBlockedRef.current = true;
         setSelectedSymbol(symbol);
         setSelectedQuote(quote);
         
-        // Scroll automático para o gráfico após um pequeno delay
+        // Scroll automático para o gráfico apenas se o usuário não fez scroll manual
         setTimeout(() => {
-          const chartElement = document.getElementById(`chart-${symbol}`);
-          if (chartElement) {
-            chartElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (!userScrolledRef.current) {
+            const chartElement = document.getElementById(`chart-${symbol}`);
+            if (chartElement) {
+              chartElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
           }
           scrollBlockedRef.current = false;
         }, 500);
@@ -452,15 +478,19 @@ function CotacoesContent() {
       setSelectedQuote(quote);
       
       // Scroll suave apenas quando o usuário clica (não durante atualizações automáticas)
-      if (!scrollBlockedRef.current) {
+      // E apenas se o usuário não fez scroll manual recentemente
+      if (!scrollBlockedRef.current && !userScrolledRef.current) {
         setTimeout(() => {
-          const element = document.getElementById(`chart-${symbol}`);
-          if (element) {
-            // Verifica se o elemento está visível antes de fazer scroll
-            const rect = element.getBoundingClientRect();
-            const isVisible = rect.top >= 0 && rect.top <= window.innerHeight * 0.8;
-            if (!isVisible) {
-              element.scrollIntoView({ behavior: "smooth", block: "start" });
+          // Verifica novamente se o usuário não fez scroll manual
+          if (!userScrolledRef.current) {
+            const element = document.getElementById(`chart-${symbol}`);
+            if (element) {
+              // Verifica se o elemento está visível antes de fazer scroll
+              const rect = element.getBoundingClientRect();
+              const isVisible = rect.top >= 0 && rect.top <= window.innerHeight * 0.8;
+              if (!isVisible) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
             }
           }
         }, 150);
