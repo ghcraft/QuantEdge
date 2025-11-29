@@ -31,6 +31,8 @@ interface Analysis {
   date: string;
   patterns: string[];
   trend: "alta" | "baixa" | "lateral";
+  source?: string;
+  sourceUrl?: string;
 }
 
 const ANALYSES: Analysis[] = [
@@ -56,6 +58,8 @@ const ANALYSES: Analysis[] = [
     date: "2024-01-15",
     patterns: ["Fundo Duplo", "Rompimento de Resistência"],
     trend: "alta",
+    source: "TradingView",
+    sourceUrl: "https://www.tradingview.com/symbols/BMFBOVESPA-IBOV/",
   },
   {
     id: "2",
@@ -79,6 +83,8 @@ const ANALYSES: Analysis[] = [
     date: "2024-01-15",
     patterns: ["Triângulo Simétrico", "Consolidação"],
     trend: "lateral",
+    source: "CoinDesk",
+    sourceUrl: "https://www.coindesk.com/",
   },
   {
     id: "3",
@@ -102,6 +108,8 @@ const ANALYSES: Analysis[] = [
     date: "2024-01-14",
     patterns: ["Fundo Duplo", "Rompimento de Tendência"],
     trend: "alta",
+    source: "Investing.com",
+    sourceUrl: "https://br.investing.com/equities/vale-on",
   },
   {
     id: "4",
@@ -125,6 +133,8 @@ const ANALYSES: Analysis[] = [
     date: "2024-01-14",
     patterns: ["Correção", "Teste de Suporte"],
     trend: "baixa",
+    source: "TradingView",
+    sourceUrl: "https://www.tradingview.com/symbols/BMFBOVESPA-PETR4/",
   },
   {
     id: "5",
@@ -148,6 +158,8 @@ const ANALYSES: Analysis[] = [
     date: "2024-01-13",
     patterns: ["Rompimento Histórico", "Tendência de Alta"],
     trend: "alta",
+    source: "Yahoo Finance",
+    sourceUrl: "https://finance.yahoo.com/quote/AAPL",
   },
   {
     id: "6",
@@ -171,6 +183,8 @@ const ANALYSES: Analysis[] = [
     date: "2024-01-13",
     patterns: ["Topo Duplo", "Divergência Negativa"],
     trend: "baixa",
+    source: "CoinMarketCap",
+    sourceUrl: "https://coinmarketcap.com/currencies/ethereum/",
   },
 ];
 
@@ -327,6 +341,21 @@ export default function AnalisesPage() {
               {selectedAnalysis ? (
                 <div className="bg-dark-card/40 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-6 sticky top-24 space-y-6">
                   {/* Header */}
+                  {selectedAnalysis.sourceUrl && (
+                    <div className="mb-4">
+                      <a
+                        href={selectedAnalysis.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-dark-accent/10 hover:bg-dark-accent/20 text-dark-accent border border-dark-accent/30 hover:border-dark-accent/50 rounded-xl transition-all duration-300 group"
+                      >
+                        <span className="text-sm font-light">Ver fonte</span>
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    </div>
+                  )}
                   <div>
                     <h3 className="text-xl font-light text-dark-text-primary mb-2">
                       {selectedAnalysis.title}

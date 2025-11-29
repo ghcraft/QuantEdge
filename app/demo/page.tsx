@@ -147,40 +147,55 @@ export default function DemoPage() {
       <div className="relative z-10">
         {/* Hero Section - Landing Page Profissional */}
         <section className="relative overflow-hidden border-b border-dark-border/20 bg-dark-bg min-h-screen flex items-center">
-          {/* Background com Efeitos do Site */}
+          {/* Background com Efeitos do Site - Melhorado */}
           <div className="absolute inset-0 bg-dark-bg"></div>
           
-          {/* Grid Pattern Sutil */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,136,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,136,0.02)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
+          {/* Grid Pattern Financeiro Mais Visível */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,136,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,136,0.04)_1px,transparent_1px)] bg-[size:60px_60px] opacity-60"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,170,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,170,255,0.02)_1px,transparent_1px)] bg-[size:120px_120px] opacity-40"></div>
           
-          {/* Gradientes Minimalistas */}
-          <div className="absolute inset-0 bg-gradient-to-br from-dark-bg via-dark-bg-secondary/50 to-dark-bg"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_100%_at_50%_0%,rgba(0,212,255,0.08),transparent_70%)]"></div>
+          {/* Gradientes Dinâmicos */}
+          <div className="absolute inset-0 bg-gradient-to-br from-dark-bg via-dark-bg-secondary/60 to-dark-bg"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_100%_at_50%_0%,rgba(0,212,255,0.15),transparent_60%)] animate-pulse"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,rgba(0,255,136,0.12),transparent_70%)] animate-pulse" style={{ animationDelay: '1s' }}></div>
           
-          {/* Partículas Animadas / Glow Minimalista */}
+          {/* Partículas Animadas / Glow Intensificado */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-dark-accent/8 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-dark-info/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-dark-accent/5 via-dark-info/5 to-dark-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-dark-accent/12 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-dark-info/12 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-dark-accent/8 via-dark-info/8 to-dark-accent/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-3/4 left-1/3 w-64 h-64 bg-dark-purple/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-dark-success/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
           </div>
           
-          {/* Linhas de Dados Abstratas */}
-          <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 2000 1200" preserveAspectRatio="none">
+          {/* Linhas de Dados Abstratas - Mais Dinâmicas */}
+          <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 2000 1200" preserveAspectRatio="none">
             <defs>
               <linearGradient id="heroGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="rgba(0,255,136,0.3)" stopOpacity="0"/>
-                <stop offset="50%" stopColor="rgba(0,255,136,0.5)" stopOpacity="1"/>
-                <stop offset="100%" stopColor="rgba(0,255,136,0.3)" stopOpacity="0"/>
+                <stop offset="0%" stopColor="rgba(0,255,136,0.4)" stopOpacity="0"/>
+                <stop offset="50%" stopColor="rgba(0,255,136,0.6)" stopOpacity="1"/>
+                <stop offset="100%" stopColor="rgba(0,255,136,0.4)" stopOpacity="0"/>
               </linearGradient>
               <linearGradient id="heroGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="rgba(0,170,255,0.3)" stopOpacity="0"/>
-                <stop offset="50%" stopColor="rgba(0,170,255,0.5)" stopOpacity="1"/>
-                <stop offset="100%" stopColor="rgba(0,170,255,0.3)" stopOpacity="0"/>
+                <stop offset="0%" stopColor="rgba(0,170,255,0.4)" stopOpacity="0"/>
+                <stop offset="50%" stopColor="rgba(0,170,255,0.6)" stopOpacity="1"/>
+                <stop offset="100%" stopColor="rgba(0,170,255,0.4)" stopOpacity="0"/>
+              </linearGradient>
+              <linearGradient id="heroGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="rgba(138,43,226,0.3)" stopOpacity="0"/>
+                <stop offset="50%" stopColor="rgba(138,43,226,0.5)" stopOpacity="1"/>
+                <stop offset="100%" stopColor="rgba(138,43,226,0.3)" stopOpacity="0"/>
               </linearGradient>
             </defs>
-            <path d="M 0,400 Q 500,200 1000,300 T 2000,250" fill="none" stroke="url(#heroGradient1)" strokeWidth="2" strokeDasharray="20,30" className="animate-pulse"/>
-            <path d="M 0,800 Q 600,600 1200,700 T 2000,650" fill="none" stroke="url(#heroGradient2)" strokeWidth="2" strokeDasharray="15,25" className="animate-pulse" style={{ animationDelay: '1s' }}/>
+            <path d="M 0,400 Q 500,200 1000,300 T 2000,250" fill="none" stroke="url(#heroGradient1)" strokeWidth="3" strokeDasharray="20,30" className="animate-pulse"/>
+            <path d="M 0,800 Q 600,600 1200,700 T 2000,650" fill="none" stroke="url(#heroGradient2)" strokeWidth="2.5" strokeDasharray="15,25" className="animate-pulse" style={{ animationDelay: '1s' }}/>
+            <path d="M 0,600 Q 400,400 800,500 T 2000,450" fill="none" stroke="url(#heroGradient3)" strokeWidth="2" strokeDasharray="10,20" className="animate-pulse" style={{ animationDelay: '0.5s' }}/>
+            <path d="M 0,300 Q 300,500 600,400 T 2000,550" fill="none" stroke="url(#heroGradient1)" strokeWidth="2" strokeDasharray="12,18" className="animate-pulse" style={{ animationDelay: '1.5s' }}/>
           </svg>
+          
+          {/* Efeito de Brilho Sutil */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,255,136,0.1),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(0,170,255,0.1),transparent_50%)]"></div>
           
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 lg:py-40 w-full">
             <div className="text-center max-w-6xl mx-auto">

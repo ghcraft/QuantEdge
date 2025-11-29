@@ -5,6 +5,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Remove cursor de texto de elementos não editáveis */
+* {
+  cursor: default;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea,
+[contenteditable="true"],
+[role="textbox"] {
+  cursor: text;
+}
+
+button,
+a,
+[role="button"],
+[onclick],
+[tabindex="0"] {
+  cursor: pointer;
+}
+
 /* Estilos globais para o tema dark premium */
 @layer base {
   :root {

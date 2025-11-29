@@ -206,7 +206,7 @@ function CotacoesContent() {
     loadInitialData();
   }, []);
 
-  // Inicializa com símbolo da URL se existir (sem scroll automático)
+  // Inicializa com símbolo da URL se existir (com scroll automático)
   useEffect(() => {
     if (isLoading) return;
     
@@ -217,7 +217,13 @@ function CotacoesContent() {
         scrollBlockedRef.current = true;
         setSelectedSymbol(symbol);
         setSelectedQuote(quote);
+        
+        // Scroll automático para o gráfico após um pequeno delay
         setTimeout(() => {
+          const chartElement = document.getElementById(`chart-${symbol}`);
+          if (chartElement) {
+            chartElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
           scrollBlockedRef.current = false;
         }, 500);
       }
