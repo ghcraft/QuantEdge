@@ -126,10 +126,10 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
     // Busca imediatamente
     fetchNews();
 
-    // Configura auto-refresh a cada 75 segundos (entre 60-90s)
+    // Configura auto-refresh a cada 30 segundos para notícias em tempo real
     refreshIntervalRef.current = setInterval(() => {
       fetchNews();
-    }, 75000); // 75 segundos
+    }, 30000); // 30 segundos - atualização em tempo real
 
     // Cleanup: limpa o interval quando o componente desmonta
     return () => {
@@ -242,9 +242,12 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
 
       {/* Footer minimalista */}
       {!loading && news.length > 0 && (
-        <div className="px-4 py-3 bg-dark-card border-t border-dark-border">
+        <div className="px-3 sm:px-4 py-2 sm:py-3 bg-dark-card border-t border-dark-border">
           <div className="flex items-center justify-center text-xs text-dark-text-secondary">
-            <span>Auto-atualização a cada 75 segundos</span>
+            <span className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+              Auto-atualização a cada 30 segundos
+            </span>
           </div>
         </div>
       )}

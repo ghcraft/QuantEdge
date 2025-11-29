@@ -62,12 +62,17 @@ export function startCronJob(): void {
   // Executa imediatamente na primeira vez
   updateNews();
 
-  // Agenda para rodar a cada 1 hora
-  cronTask = cron.schedule("0 * * * *", () => {
+  // Agenda para rodar a cada 1 hora (em produção)
+  // Em desenvolvimento, pode rodar mais frequentemente
+  const cronSchedule = process.env.NODE_ENV === "development" 
+    ? "*/15 * * * *" // A cada 15 minutos em desenvolvimento
+    : "0 * * * *";   // A cada 1 hora em produção
+  
+  cronTask = cron.schedule(cronSchedule, () => {
     updateNews();
   });
 
-  console.log("⏰ Cron job iniciado - atualização a cada 1 hora");
+  console.log(`⏰ Cron job iniciado - atualização a cada ${process.env.NODE_ENV === "development" ? "15 minutos" : "1 hora"}`);
 }
 
 /**
