@@ -6,7 +6,6 @@ import { useState } from "react";
 import CompactSearchBar from "./CompactSearchBar";
 import AuthMenu from "./AuthMenu";
 import Logo from "./Logo";
-import ThemeToggle from "./ThemeToggle";
 
 /**
  * Componente de Navegação Principal
@@ -26,7 +25,7 @@ export default function Navigation() {
       ];
 
   return (
-    <nav className="border-b border-dark-border light:border-light-border bg-dark-bg-secondary/80 light:bg-light-bg-secondary/80 backdrop-blur-md sticky top-0 z-[100]">
+    <nav className="border-b border-dark-border bg-dark-bg-secondary/80 backdrop-blur-md sticky top-0 z-[100]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo e Nome */}
@@ -48,25 +47,24 @@ export default function Navigation() {
                     transition-all duration-300
                     ${
                       isActive
-                        ? "text-dark-accent light:text-light-accent bg-dark-accent/10 light:bg-light-accent/10"
-                        : "text-dark-text-muted light:text-light-text-muted hover:text-dark-text-primary light:hover:text-light-text-primary hover:bg-dark-card light:hover:bg-light-card"
+                        ? "text-dark-accent bg-dark-accent/10"
+                        : "text-dark-text-muted hover:text-dark-text-primary hover:bg-dark-card"
                     }
                   `}
                 >
                   {isActive && (
-                    <span className="absolute inset-0 bg-gradient-to-r from-dark-accent/20 light:from-light-accent/20 to-transparent rounded-lg blur-sm"></span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-dark-accent/20 to-transparent rounded-lg blur-sm"></span>
                   )}
                   <span className="relative">{item.label}</span>
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-dark-accent light:from-light-accent to-dark-info light:to-light-info"></span>
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-dark-accent to-dark-info"></span>
                   )}
                 </Link>
               );
             })}
 
-            {/* Theme Toggle e Auth Menu */}
-            <div className="ml-3 pl-3 border-l border-dark-border light:border-light-border flex items-center gap-3">
-              <ThemeToggle />
+            {/* Auth Menu */}
+            <div className="ml-3 pl-3 border-l border-dark-border flex items-center gap-3">
               <AuthMenu />
             </div>
           </div>
@@ -74,7 +72,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-dark-text light:text-light-text p-2"
+            className="md:hidden text-dark-text p-2"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
@@ -101,8 +99,8 @@ export default function Navigation() {
                         transition-all duration-300
                         ${
                           isActive
-                            ? "text-dark-accent light:text-light-accent bg-dark-accent/10 light:bg-light-accent/10"
-                            : "text-dark-text-muted light:text-light-text-muted hover:text-dark-text light:hover:text-light-text hover:bg-dark-card light:hover:bg-light-card"
+                            ? "text-dark-accent bg-dark-accent/10"
+                            : "text-dark-text-muted hover:text-dark-text hover:bg-dark-card"
                         }
                       `}
                     >
@@ -111,10 +109,9 @@ export default function Navigation() {
                   );
                 })}
                 
-                {/* Mobile Theme Toggle e Auth */}
-                <div className="pt-4 border-t border-dark-border light:border-light-border mt-4">
+                {/* Mobile Auth */}
+                <div className="pt-4 border-t border-dark-border mt-4">
                   <div className="px-4 flex items-center justify-between">
-                    <ThemeToggle />
                     <AuthMenu />
                   </div>
                 </div>

@@ -435,9 +435,9 @@ export default function DashboardPage() {
 
   return (
     <Providers>
-      <main className="min-h-screen bg-dark-bg light:bg-light-bg relative">
+      <main className="min-h-screen bg-dark-bg relative">
         {/* Background Financeiro Global */}
-        <div className="fixed inset-0 bg-dark-bg light:bg-light-bg pointer-events-none z-0">
+        <div className="fixed inset-0 bg-dark-bg pointer-events-none z-0">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,136,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,136,0.01)_1px,transparent_1px)] bg-[size:100px_100px]"></div>
           <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 2000 1200" preserveAspectRatio="none">
             <defs>
@@ -455,14 +455,14 @@ export default function DashboardPage() {
         
         <div className="relative z-10">
           {/* Header Personalizado */}
-          <section className="border-b border-dark-border/50 light:border-light-border/50 bg-dark-bg-secondary/30 light:bg-light-bg-secondary/30 backdrop-blur-xl">
+          <section className="border-b border-dark-border/50 bg-dark-bg-secondary/30 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-extralight text-dark-text-primary light:text-light-text-primary mb-2 tracking-tight">
-                    Bem-vindo, <span className="bg-gradient-to-r from-dark-accent light:from-light-accent to-dark-info light:to-light-info bg-clip-text text-transparent">{user?.name || "Investidor"}</span>
+                  <h1 className="text-3xl md:text-4xl font-extralight text-dark-text-primary mb-2 tracking-tight">
+                    Bem-vindo, <span className="bg-gradient-to-r from-dark-accent to-dark-info bg-clip-text text-transparent">{user?.name || "Investidor"}</span>
                   </h1>
-                  <p className="text-sm text-dark-text-muted light:text-light-text-muted font-light capitalize">
+                  <p className="text-sm text-dark-text-muted font-light capitalize">
                     {dateString}
                   </p>
                 </div>
@@ -492,15 +492,15 @@ export default function DashboardPage() {
                 <div className="mb-6">
                   <div className="inline-flex items-center space-x-2 mb-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-purple-400 to-transparent"></div>
-                    <h2 className="text-2xl font-extralight text-dark-text-primary light:text-light-text-primary tracking-tight">
+                    <h2 className="text-2xl font-extralight text-dark-text-primary tracking-tight">
                       Resumo do Portfolio
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                     Visão geral dos seus investimentos e performance
                   </p>
                 </div>
-                <div className="bg-dark-card/30 light:bg-light-card/30 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 rounded-3xl p-8">
+                <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                   <PortfolioSummary />
                 </div>
               </section>
@@ -514,11 +514,11 @@ export default function DashboardPage() {
                       Indicadores do Mercado
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                     Principais índices e indicadores em tempo real
                   </p>
                 </div>
-                <div className="bg-dark-card/30 light:bg-light-card/30 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 rounded-3xl p-8">
+                <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                   <MarketStats />
                 </div>
               </section>
@@ -535,11 +535,11 @@ export default function DashboardPage() {
                           Acesso Rápido
                         </h2>
                       </div>
-                      <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                      <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                         Navegação rápida para principais funcionalidades
                       </p>
                     </div>
-                    <div className="bg-dark-card/30 light:bg-light-card/30 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 rounded-3xl p-8">
+                    <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                       <QuickAccess />
                     </div>
                   </div>
@@ -553,11 +553,11 @@ export default function DashboardPage() {
                           Favoritos Recentes
                         </h2>
                       </div>
-                      <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                      <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                         Seus ativos favoritos mais recentes com gráficos
                       </p>
                     </div>
-                    <div className="bg-dark-card/30 light:bg-light-card/30 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 rounded-3xl p-8">
+                    <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                       <RecentFavorites />
                     </div>
                   </div>
@@ -573,11 +573,11 @@ export default function DashboardPage() {
                       Destaques do Dia
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                     Maiores ganhadores e perdedores do mercado
                   </p>
                 </div>
-                <div className="bg-dark-card/30 light:bg-light-card/30 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 rounded-3xl p-8">
+                <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                   <TopMovers />
                 </div>
               </section>
@@ -591,7 +591,7 @@ export default function DashboardPage() {
                       Visão Geral do Mercado
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                     Gráficos interativos em tempo real de ações, índices e criptomoedas
                   </p>
                 </div>
@@ -607,11 +607,11 @@ export default function DashboardPage() {
                       Notícias Financeiras
                     </h2>
                   </div>
-                  <p className="text-sm text-dark-text-muted/80 light:text-light-text-muted/80 font-light ml-3">
+                  <p className="text-sm text-dark-text-muted/80/80 font-light ml-3">
                     Últimas atualizações e análises do mercado financeiro
                   </p>
                 </div>
-                <div className="bg-dark-card/30 light:bg-light-card/30 backdrop-blur-xl border border-dark-border/50 light:border-light-border/50 rounded-3xl p-8">
+                <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-8">
                   <NewsFeed />
                 </div>
               </section>

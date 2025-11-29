@@ -242,8 +242,8 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
 
       {/* Footer minimalista */}
       {!loading && news.length > 0 && (
-        <div className="px-3 sm:px-4 py-2 sm:py-3 bg-dark-card border-t border-dark-border">
-          <div className="flex items-center justify-center text-xs text-dark-text-secondary">
+        <div className="px-3 sm:px-4 py-2 sm:py-3 bg-dark-card light:bg-light-card border-t border-dark-border light:border-light-border">
+          <div className="flex items-center justify-center text-xs text-dark-text-secondary light:text-light-text-secondary">
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
               Auto-atualização a cada 30 segundos
