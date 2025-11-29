@@ -69,8 +69,6 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // Desabilita completamente o prerender
-    isrMemoryCacheSize: 0,
   },
   
   // Configurações do webpack para melhor resolução de módulos
