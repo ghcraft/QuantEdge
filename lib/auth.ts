@@ -137,7 +137,14 @@ export const AuthService = {
         const result = await AuthServiceAPI.login(email, password);
         if (result.success && result.user && result.token) {
           // Salva token e usuário
-          this.saveToken(result.token, result.user);
+          const session: AuthSession = {
+            user: result.user,
+            token: result.token,
+            expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 dias
+          };
+          localStorage.setItem("authSession", JSON.stringify(session));
+          this.syncToCookies("authSession", session);
+          window.dispatchEvent(new CustomEvent("authChange"));
           return { success: true, user: result.user };
         }
         // Se API falhar, retorna erro específico
