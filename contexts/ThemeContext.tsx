@@ -66,12 +66,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => {
     if (typeof window === "undefined") return;
-    const newTheme = theme === "dark" ? "light" : "dark";
+    const newTheme: Theme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
     applyTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     // Atualiza o singleton com a função correta
-    const updatedContextValue = { theme: newTheme, toggleTheme };
+    const updatedContextValue: ThemeContextType = { theme: newTheme, toggleTheme };
     themeSingleton = updatedContextValue;
   };
 
