@@ -583,7 +583,7 @@ export default function DashboardPage() {
               </section>
 
               {/* Seção de Gráficos */}
-              <section>
+              <section className="mb-8">
                 <div className="mb-6">
                   <div className="inline-flex items-center space-x-2 mb-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-dark-info to-transparent"></div>
@@ -595,7 +595,9 @@ export default function DashboardPage() {
                     Gráficos interativos em tempo real de ações, índices e criptomoedas
                   </p>
                 </div>
-                <MarketOverview />
+                <div className="bg-dark-card/30 backdrop-blur-xl border border-dark-border/50 rounded-3xl p-6 overflow-hidden">
+                  <MarketOverview />
+                </div>
               </section>
 
               {/* Seção de Notícias */}

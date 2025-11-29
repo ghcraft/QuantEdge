@@ -265,7 +265,7 @@ export default function MarketOverview() {
                 )}
                 
                 {/* Gráfico compacto */}
-                <div className="w-full relative" style={{ height: "120px" }}>
+                <div className="w-full relative overflow-hidden" style={{ height: "120px", maxHeight: "120px" }}>
                   <FinancialChart
                     symbol={asset.symbol}
                     height={120}

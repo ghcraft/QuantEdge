@@ -123,18 +123,23 @@ export default function NewsFeed({ filterSources }: NewsFeedProps = {}) {
    * Efeito para buscar notícias na montagem e configurar auto-refresh
    */
   useEffect(() => {
-    // Busca imediatamente
-    fetchNews();
+    // Busca imediatamente ao montar
+    fetchNews().catch((err) => {
+      console.error("Erro ao buscar notícias na montagem:", err);
+    });
 
     // Configura auto-refresh a cada 30 segundos para notícias em tempo real
     refreshIntervalRef.current = setInterval(() => {
-      fetchNews();
+      fetchNews().catch((err) => {
+        console.error("Erro ao atualizar notícias:", err);
+      });
     }, 30000); // 30 segundos - atualização em tempo real
 
     // Cleanup: limpa o interval quando o componente desmonta
     return () => {
       if (refreshIntervalRef.current) {
         clearInterval(refreshIntervalRef.current);
+        refreshIntervalRef.current = null;
       }
     };
   }, [fetchNews]);

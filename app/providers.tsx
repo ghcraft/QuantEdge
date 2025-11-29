@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ClientLayout from "@/components/ClientLayout";
+import AuthSync from "@/components/AuthSync";
 
 /**
  * Providers que envolvem toda a aplicação
@@ -30,6 +31,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <ErrorBoundary>
+      <AuthSync />
       <Suspense
         fallback={
           <div className="min-h-screen bg-dark-bg flex items-center justify-center">
